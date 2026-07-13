@@ -199,10 +199,19 @@ export function calculatePSERSRetirement(profile: UserProfile): CalculationResul
 
   // 6. Premium Assistance
   // Eligibility: 24.5+ years of service OR (15+ years of service AND superannuated)
-  const qualifiesForPremiumAssistance = (profile.serviceYears >= 24.5) || (profile.serviceYears >= 15 && isSuperannuated);
+  const hasCbsdIncentive = !!profile.cbsdIncentive;
+  const qualifiesForCbsd = hasCbsdIncentive && profile.serviceYears >= 35;
+  const customPremium = profile.cbsdPremiumAmount !== undefined ? profile.cbsdPremiumAmount : 150;
+
+  // If using the CBSD active employee rate incentive, you do not receive the standard $100/mo retiree Premium Assistance
+  const qualifiesForPremiumAssistance = ((profile.serviceYears >= 24.5) || (profile.serviceYears >= 15 && isSuperannuated)) && !qualifiesForCbsd;
   const premiumAssistanceAmount = qualifiesForPremiumAssistance ? 100 : 0;
 
-  if (qualifiesForPremiumAssistance) {
+  if (qualifiesForCbsd) {
+    explanationSteps.push(
+      `ℹ️ Premium Assistance: Since you are keeping your district group health plan under the CBSD active employee incentive, you do not receive the standard $100/mo retiree PSERS Premium Assistance.`
+    );
+  } else if (qualifiesForPremiumAssistance) {
     explanationSteps.push(
       `💖 Premium Assistance Eligible! You qualify for the PSERS Health Options Program (HOP) premium assistance. The state will credit up to $100.00/month directly toward your monthly health insurance premium!`
     );
@@ -214,11 +223,10 @@ export function calculatePSERSRetirement(profile: UserProfile): CalculationResul
 
   // 7. Healthcare Costs Estimates
   let healthcarePremiumEst = 0;
-  const hasCbsdIncentive = !!profile.cbsdIncentive;
-  const qualifiesForCbsd = hasCbsdIncentive && profile.serviceYears >= 35;
-  const customPremium = profile.cbsdPremiumAmount !== undefined ? profile.cbsdPremiumAmount : 150;
+  const needsPre65 = (profile.pre65Healthcare || hasCbsdIncentive) && profile.targetAge < 65;
+  const needsPost65 = profile.post65Healthcare && profile.targetAge >= 65;
 
-  if (profile.pre65Healthcare && profile.targetAge < 65) {
+  if (needsPre65) {
     if (qualifiesForCbsd) {
       healthcarePremiumEst = customPremium;
       explanationSteps.push(
@@ -236,13 +244,13 @@ export function calculatePSERSRetirement(profile: UserProfile): CalculationResul
         );
       }
     }
-  } else if (profile.post65Healthcare && profile.targetAge >= 65) {
+  } else if (needsPost65) {
     // Post 65 Medicare + HOP Supplement
     healthcarePremiumEst = 220;
     explanationSteps.push(
       `🩺 Post-65 Medicare Supplement: Since you are age 65+, you qualify for Medicare. The PSERS Health Options Program (HOP) supplement is estimated at $220.00/month.`
     );
-  } else if (profile.pre65Healthcare || profile.post65Healthcare) {
+  } else if (profile.pre65Healthcare || profile.post65Healthcare || hasCbsdIncentive) {
     // Mixed timeline or target age transitioning
     if (profile.targetAge >= 65) {
       healthcarePremiumEst = 220;
