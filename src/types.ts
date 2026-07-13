@@ -24,6 +24,8 @@ export interface UserProfile {
   lumpSumWithdrawal: number; // accumulated deductions + interest for Option 4
   pre65Healthcare: boolean; // Needs coverage before age 65
   post65Healthcare: boolean; // Medicare + HOP supplement interest
+  cbsdIncentive?: boolean;
+  cbsdPremiumAmount?: number;
 }
 
 export interface CalculationResult {

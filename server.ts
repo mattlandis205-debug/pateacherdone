@@ -56,6 +56,8 @@ app.post("/api/chat", async (req, res) => {
         hasBeneficiary,
         beneficiaryAge,
         healthcareTimeline,
+        cbsdIncentive,
+        cbsdPremiumAmount,
       } = userData;
 
       profileContext = `\n\nCURRENT TEACHER PROFILE FOR RETIREMENT CALCULATION:
@@ -65,7 +67,8 @@ app.post("/api/chat", async (req, res) => {
 - Years of Credited Service: ${serviceYears || "Not provided"}
 - Final Average Salary (FAS): $${fas ? Number(fas).toLocaleString() : "Not provided"}
 - Beneficiary: ${hasBeneficiary ? `Yes (Age ${beneficiaryAge || "unknown"})` : "No"}
-- Healthcare Timeline Interest: ${healthcareTimeline || "Pre-65 & Post-65 Medicare HOP"}`;
+- Healthcare Timeline Interest: ${healthcareTimeline || "Pre-65 & Post-65 Medicare HOP"}
+- CBSD Staff Health Incentive: ${cbsdIncentive ? `Yes ($${cbsdPremiumAmount || 0}/mo)` : "No"}`;
     }
 
     const systemInstruction = `You are the "PA Teacher Retirement Navigator", an empathetic, highly knowledgeable, and patient educational AI retirement planner for Pennsylvania public school teachers.

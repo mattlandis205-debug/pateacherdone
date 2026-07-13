@@ -39,6 +39,8 @@ export default function App() {
     lumpSumWithdrawal: 112500, // Pre-calculated standard estimate (approx. 1.5 * serviceYears * FAS * 0.08)
     pre65Healthcare: true,
     post65Healthcare: true,
+    cbsdIncentive: false,
+    cbsdPremiumAmount: 150,
   });
 
   // Automatically estimate lump sum when key inputs change
@@ -550,6 +552,37 @@ export default function App() {
                       <span className="text-[10px] text-slate-500 block">Medicare supplement plans. Est. $220/mo. eligible for subsidies.</span>
                     </div>
                   </label>
+
+                  <label className="flex items-start gap-2.5 cursor-pointer border-t border-slate-100 pt-2.5 mt-1">
+                    <input
+                      type="checkbox"
+                      className="mt-0.5 h-4 w-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
+                      checked={profile.cbsdIncentive || false}
+                      onChange={(e) => updateProfileField("cbsdIncentive", e.target.checked)}
+                    />
+                    <div>
+                      <span className="text-xs font-bold text-slate-700 block">I am a CBSD staff member retiring the first eligible year and qualify for my current healthcare premium</span>
+                      <span className="text-[10px] text-slate-500 block">Keeps active district rate pre-65 if retiring at 35 years of service.</span>
+                    </div>
+                  </label>
+
+                  {profile.cbsdIncentive && (
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 mt-1.5 space-y-1.5">
+                      <label className="block text-[11px] font-semibold text-slate-600" htmlFor="cbsd-premium-input">
+                        Current monthly premium you pay through the district ($):
+                      </label>
+                      <input
+                        id="cbsd-premium-input"
+                        type="number"
+                        min="0"
+                        max="1500"
+                        className="w-full bg-white border border-slate-200 rounded-lg py-1 px-2.5 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
+                        value={profile.cbsdPremiumAmount !== undefined ? profile.cbsdPremiumAmount : ""}
+                        placeholder="e.g. 150"
+                        onChange={(e) => updateProfileField("cbsdPremiumAmount", parseInt(e.target.value) || 0)}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 

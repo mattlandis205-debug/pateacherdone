@@ -214,12 +214,28 @@ export function calculatePSERSRetirement(profile: UserProfile): CalculationResul
 
   // 7. Healthcare Costs Estimates
   let healthcarePremiumEst = 0;
+  const hasCbsdIncentive = !!profile.cbsdIncentive;
+  const qualifiesForCbsd = hasCbsdIncentive && profile.serviceYears >= 35;
+  const customPremium = profile.cbsdPremiumAmount !== undefined ? profile.cbsdPremiumAmount : 150;
+
   if (profile.pre65Healthcare && profile.targetAge < 65) {
-    // Under 65 is expensive
-    healthcarePremiumEst = 750;
-    explanationSteps.push(
-      `🩺 Pre-65 Healthcare Gap: Retiring at age ${profile.targetAge} means you are below the age-65 Medicare line. Individual coverage or COBRA can be extremely costly—estimated at $750.00/month.`
-    );
+    if (qualifiesForCbsd) {
+      healthcarePremiumEst = customPremium;
+      explanationSteps.push(
+        `🎁 CBSD Health Incentive: Since you have 35+ years of service and retire as soon as eligible, you keep your active employee rate of $${customPremium.toLocaleString()}/month instead of the standard pre-65 individual rate.`
+      );
+    } else {
+      healthcarePremiumEst = 750;
+      if (hasCbsdIncentive) {
+        explanationSteps.push(
+          `⚠️ CBSD Health Incentive: You selected the CBSD incentive, but you do not meet the 35-year service requirement (you have ${profile.serviceYears} years). Standard pre-65 individual coverage is estimated at $750.00/month.`
+        );
+      } else {
+        explanationSteps.push(
+          `🩺 Pre-65 Healthcare Gap: Retiring at age ${profile.targetAge} means you are below the age-65 Medicare line. Individual coverage or COBRA can be extremely costly—estimated at $750.00/month.`
+        );
+      }
+    }
   } else if (profile.post65Healthcare && profile.targetAge >= 65) {
     // Post 65 Medicare + HOP Supplement
     healthcarePremiumEst = 220;
@@ -228,7 +244,11 @@ export function calculatePSERSRetirement(profile: UserProfile): CalculationResul
     );
   } else if (profile.pre65Healthcare || profile.post65Healthcare) {
     // Mixed timeline or target age transitioning
-    healthcarePremiumEst = profile.targetAge >= 65 ? 220 : 750;
+    if (profile.targetAge >= 65) {
+      healthcarePremiumEst = 220;
+    } else {
+      healthcarePremiumEst = qualifiesForCbsd ? customPremium : 750;
+    }
   }
 
   // 8. Payout Option Reductions
