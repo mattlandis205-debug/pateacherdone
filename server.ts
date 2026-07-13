@@ -3,11 +3,16 @@ import path from "path";
 import dotenv from "dotenv";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
+import Stripe from "stripe";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "";
+// Initialize stripe (Stripe SDK v14+ handles CJS/ESM cleanly)
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey) : null;
 
 // Initialize Google GenAI on the server
 const apiKey = process.env.GEMINI_API_KEY;
@@ -133,6 +138,49 @@ Keep your responses organized, clear, and readable using simple bullet points or
   } catch (error: any) {
     console.error("Gemini API Error:", error);
     res.status(500).json({ error: error.message || "An error occurred during generation." });
+  }
+});
+
+// Stripe checkout session creation endpoint
+app.post("/api/create-checkout-session", async (req, res) => {
+  try {
+    if (!stripe) {
+      return res.status(500).json({
+        error: "Stripe API is not configured on the server. Please add STRIPE_SECRET_KEY in your environment variables.",
+      });
+    }
+
+    const { deliveryMethod, emailAddress } = req.body;
+    const origin = req.headers.origin || "http://localhost:3000";
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "Premium Retirement Report",
+              description: "Personalized PSERS retirement calculations and scenario comparison",
+            },
+            unit_amount: 100, // $1.00 USD in cents
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      metadata: {
+        deliveryMethod: deliveryMethod || "print",
+        emailAddress: emailAddress || "",
+      },
+      success_url: `${origin}/?status=success&method=${deliveryMethod || "print"}&email=${encodeURIComponent(emailAddress || "")}`,
+      cancel_url: `${origin}/`,
+    });
+
+    res.json({ url: session.url });
+  } catch (error: any) {
+    console.error("Stripe Checkout Error:", error);
+    res.status(500).json({ error: error.message || "Failed to initiate checkout session." });
   }
 });
 

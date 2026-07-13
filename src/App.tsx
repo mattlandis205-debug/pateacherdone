@@ -117,21 +117,65 @@ export default function App() {
     }
   };
 
-  const handleProcessPayment = () => {
+  const handleProcessPayment = async () => {
     setIsProcessingPayment(true);
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          deliveryMethod,
+          emailAddress,
+        }),
+      });
+
+      if (!response.ok) {
+        let errMsg = "Failed to create checkout session.";
+        try {
+          const errData = await response.json();
+          if (errData && errData.error) errMsg = errData.error;
+        } catch (e) {}
+        throw new Error(errMsg);
+      }
+
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL returned from server.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(`⚠️ Payment Error: ${err.message}`);
       setIsProcessingPayment(false);
+    }
+  };
+
+  // Check for Stripe Checkout success redirect on page load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const method = params.get("method") as 'print' | 'email' | null;
+    const email = params.get("email");
+
+    if (status === "success") {
       setIsPaid(true);
-      if (deliveryMethod === 'print') {
-        setShowPaymentModal(false);
+      if (method) setDeliveryMethod(method);
+      if (email) setEmailAddress(decodeURIComponent(email));
+
+      setPaymentStep("success");
+      setShowPaymentModal(true);
+
+      // Clean the query parameters from browser URL bar without reloading
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      if (method === "print") {
         setTimeout(() => {
           window.print();
-        }, 500);
-      } else {
-        setPaymentStep('success');
+        }, 1000);
       }
-    }, 2000);
-  };
+    }
+  }, []);
 
   // Auto scroll chat to bottom
   useEffect(() => {
@@ -1048,62 +1092,12 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Card form fields */}
-                <div className="space-y-3">
+                {/* Redirect Information */}
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3.5 flex gap-2.5 text-xs text-slate-600 leading-normal">
+                  <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Cardholder Name</label>
-                    <input
-                      type="text"
-                      defaultValue="Matthew Landis"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
-                      placeholder="Jane Doe"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Card Number</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        defaultValue="4242 4242 4242 4242"
-                        maxLength={19}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
-                        placeholder="4242 4242 4242 4242"
-                      />
-                      <span className="absolute right-3 top-2 text-xs text-emerald-600 font-bold">VISA</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Expiration</label>
-                      <input
-                        type="text"
-                        defaultValue="12 / 29"
-                        maxLength={5}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-center text-slate-800"
-                        placeholder="MM / YY"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">CVC</label>
-                      <input
-                        type="text"
-                        defaultValue="123"
-                        maxLength={3}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-center text-slate-800"
-                        placeholder="123"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Demo Mode Notice */}
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2 text-[10px] text-slate-700 leading-normal">
-                  <Info className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-amber-800 block">Stripe Test Mode Active</strong>
-                    You can click the pay button directly to simulate the payment. Any card details will be accepted.
+                    <strong className="text-slate-800 block mb-0.5">Secure Checkout via Stripe</strong>
+                    Clicking the button below will redirect you to Stripe's secure hosted payment page to process the $1.00 charge. Your credentials are never stored on our servers.
                   </div>
                 </div>
 
