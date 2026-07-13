@@ -437,10 +437,12 @@ export default function App() {
                       {/* Sub-choice for the remaining pie */}
                       <div>
                         <span className="text-xs font-bold text-slate-700 block mb-1.5">How to distribute the remaining monthly checks:</span>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-3 gap-2">
                           <button
                             onClick={() => updateProfileField("payoutOption", "option4")}
-                            className="p-2 text-left rounded-lg text-xs border border-emerald-500 bg-emerald-50/50 font-semibold text-emerald-800"
+                            className={`p-2 text-center rounded-lg text-[10px] border leading-tight ${
+                              profile.payoutOption === "option4" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
+                            }`}
                           >
                             Single Life (Max Leftover)
                           </button>
@@ -449,13 +451,26 @@ export default function App() {
                               updateProfileField("payoutOption", "option2");
                               updateProfileField("hasBeneficiary", true);
                             }}
-                            className="p-2 text-left rounded-lg text-xs border border-slate-200 hover:border-slate-300 bg-white text-slate-700"
+                            className={`p-2 text-center rounded-lg text-[10px] border leading-tight ${
+                              profile.payoutOption === "option2" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
+                            }`}
                           >
                             Protect Survivor 100%
                           </button>
+                          <button
+                            onClick={() => {
+                              updateProfileField("payoutOption", "option3");
+                              updateProfileField("hasBeneficiary", true);
+                            }}
+                            className={`p-2 text-center rounded-lg text-[10px] border leading-tight ${
+                              profile.payoutOption === "option3" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
+                            }`}
+                          >
+                            Protect Survivor 50%
+                          </button>
                         </div>
                         <p className="text-[10px] text-slate-500 mt-1 italic">
-                          Combining Option 4 with Option 2 protects your surviving spouse's check, but results in double reduction.
+                          Combining Option 4 with Option 2 or 3 protects your surviving beneficiary, but results in multiple adjustments.
                         </p>
                       </div>
                     </div>
@@ -464,10 +479,10 @@ export default function App() {
                   {profile.payoutOption !== "option4" && (
                     <div>
                       <span className="text-xs font-semibold text-slate-600 block mb-1.5">Select standard pension distribution:</span>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-3 gap-2">
                         <button
                           onClick={() => updateProfileField("payoutOption", "max")}
-                          className={`p-2 text-center rounded-lg text-xs border font-medium ${
+                          className={`p-2 text-center rounded-lg text-[11px] border font-medium leading-tight ${
                             profile.payoutOption === "max" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
                           }`}
                         >
@@ -478,11 +493,22 @@ export default function App() {
                             updateProfileField("payoutOption", "option2");
                             updateProfileField("hasBeneficiary", true);
                           }}
-                          className={`p-2 text-center rounded-lg text-xs border font-medium ${
+                          className={`p-2 text-center rounded-lg text-[11px] border font-medium leading-tight ${
                             profile.payoutOption === "option2" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
                           }`}
                         >
                           Joint Survivor 100% (Option 2)
+                        </button>
+                        <button
+                          onClick={() => {
+                            updateProfileField("payoutOption", "option3");
+                            updateProfileField("hasBeneficiary", true);
+                          }}
+                          className={`p-2 text-center rounded-lg text-[11px] border font-medium leading-tight ${
+                            profile.payoutOption === "option3" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
+                          }`}
+                        >
+                          Joint Survivor 50% (Option 3)
                         </button>
                       </div>
                     </div>
@@ -720,6 +746,19 @@ export default function App() {
                         <td className="py-3 px-3 text-right text-slate-950">${results.optionReductions.option2.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</td>
                         <td className="py-3 px-3 text-right text-emerald-700 font-bold">
                           ${Math.max(0, results.optionReductions.option2 - Math.max(0, results.healthcarePremiumEst - results.premiumAssistanceAmount)).toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo
+                        </td>
+                      </tr>
+
+                      {/* Row 4: Option 3 */}
+                      <tr className={`hover:bg-slate-50 ${profile.payoutOption === "option3" ? "bg-emerald-50/30 font-semibold" : ""}`}>
+                        <td className="py-3 px-3">
+                          <div className="font-bold text-slate-800">Option 3 (50% Survivor)</div>
+                          <div className="text-[10px] text-slate-500">Protects spouse with half-size check.</div>
+                        </td>
+                        <td className="py-3 px-3 text-right text-slate-400 font-mono">-</td>
+                        <td className="py-3 px-3 text-right text-slate-950">${results.optionReductions.option3.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo</td>
+                        <td className="py-3 px-3 text-right text-emerald-700 font-bold">
+                          ${Math.max(0, results.optionReductions.option3 - Math.max(0, results.healthcarePremiumEst - results.premiumAssistanceAmount)).toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo
                         </td>
                       </tr>
 

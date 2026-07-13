@@ -285,8 +285,24 @@ export function calculatePSERSRetirement(profile: UserProfile): CalculationResul
     : 0;
 
   if (isVested && profile.classId !== "DC") {
+    let optionText = `${profile.payoutOption.toUpperCase()}`;
+    let survivorText = "";
+    if (profile.payoutOption === "option2") {
+      optionText = "Option 2 (100% Survivor)";
+      survivorText = ` (upon your death, your beneficiary will continue to receive the identical monthly check of $${selectedOptionGross.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mo for life)`;
+    } else if (profile.payoutOption === "option3") {
+      optionText = "Option 3 (50% Survivor)";
+      survivorText = ` (upon your death, your beneficiary will receive a half-size monthly check of $${(selectedOptionGross / 2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mo for life)`;
+    } else if (profile.payoutOption === "max") {
+      optionText = "Maximum Single Life";
+    } else if (profile.payoutOption === "option1") {
+      optionText = "Option 1 (Declining Balance)";
+    } else if (profile.payoutOption === "option4") {
+      optionText = "Option 4 (Lump-Sum Combo)";
+    }
+
     explanationSteps.push(
-      `💰 Net Take-Home Check: Under the ${profile.payoutOption.toUpperCase()} payout plan, your gross check is $${selectedOptionGross.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month. Subtracting your healthcare premium ($${healthcarePremiumEst}/mo) and adding Premium Assistance (+$${premiumAssistanceAmount}/mo) leaves an estimated net monthly take-home check of $${netMonthlyPension.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.`
+      `💰 Net Take-Home Check: Under the ${optionText} payout plan, your gross check is $${selectedOptionGross.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month${survivorText}. Subtracting your healthcare premium ($${healthcarePremiumEst}/mo) and adding Premium Assistance (+$${premiumAssistanceAmount}/mo) leaves an estimated net monthly take-home check of $${netMonthlyPension.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.`
     );
   }
 
