@@ -667,10 +667,13 @@ export default function App() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleDownloadReportClick}
-                    className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition-colors cursor-pointer"
+                    className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs transition-colors cursor-pointer"
                   >
-                    <Download className="h-3.5 w-3.5" />
-                    {isPaid ? "Download PDF Report" : "Download Premium PDF Report"}
+                    <Download className="h-4 w-4 shrink-0" />
+                    <span className="flex flex-col items-start leading-tight text-left">
+                      <span>Download/Email Report</span>
+                      <span className="text-[9px] opacity-85 font-normal">{isPaid ? "(Unlocked)" : "(Premium)"}</span>
+                    </span>
                   </button>
                   <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg text-xs font-semibold">
                     <CheckCircle className="h-3.5 w-3.5" />
