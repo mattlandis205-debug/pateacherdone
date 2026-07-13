@@ -424,9 +424,12 @@ export default function App() {
                           value={profile.lumpSumWithdrawal}
                           onChange={(e) => updateProfileField("lumpSumWithdrawal", parseInt(e.target.value))}
                         />
-                        <p className="text-[10px] text-slate-400 mt-1 leading-normal">
-                          This represents your personal retirement contributions over your teaching career plus 4% guaranteed interest.
-                        </p>
+                        <div className="mt-2 bg-amber-50/80 border border-amber-200/60 rounded-lg p-2.5 text-[10.5px] text-slate-700 leading-normal flex gap-1.5 items-start">
+                          <Info className="h-3.5 w-3.5 text-amber-600 shrink-0 mt-0.5" />
+                          <div>
+                            <strong className="text-amber-800">Check Your PSERS Statement:</strong> This is a formula estimate. For 100% accuracy, look up your actual <strong>"Accumulated Contributions & Interest"</strong> on your official PSERS Member Self-Service statement and use this slider to adjust it.
+                          </div>
+                        </div>
                       </div>
 
                       {/* Sub-choice for the remaining pie */}
