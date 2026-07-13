@@ -19,7 +19,8 @@ import {
   PieChart as PieIcon,
   CheckCircle,
   Clock,
-  Briefcase
+  Briefcase,
+  Download
 } from "lucide-react";
 import { PSERS_CLASSES, calculatePSERSRetirement } from "./data/psersData";
 import { PSERSClassId, UserProfile, CalculationResult } from "./types";
@@ -93,6 +94,44 @@ export default function App() {
   const [inputValue, setInputValue] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const chatBottomRef = useRef<HTMLDivElement>(null);
+
+  // 4. Report Print/PDF Stripe Payment State
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
+  const [deliveryMethod, setDeliveryMethod] = useState<'print' | 'email'>('print');
+  const [emailAddress, setEmailAddress] = useState('');
+  const [paymentStep, setPaymentStep] = useState<'form' | 'success'>('form');
+
+  const handleDownloadReportClick = () => {
+    if (isPaid) {
+      if (deliveryMethod === 'email' && emailAddress) {
+        setPaymentStep('success');
+        setShowPaymentModal(true);
+      } else {
+        window.print();
+      }
+    } else {
+      setPaymentStep('form');
+      setShowPaymentModal(true);
+    }
+  };
+
+  const handleProcessPayment = () => {
+    setIsProcessingPayment(true);
+    setTimeout(() => {
+      setIsProcessingPayment(false);
+      setIsPaid(true);
+      if (deliveryMethod === 'print') {
+        setShowPaymentModal(false);
+        setTimeout(() => {
+          window.print();
+        }, 500);
+      } else {
+        setPaymentStep('success');
+      }
+    }, 2000);
+  };
 
   // Auto scroll chat to bottom
   useEffect(() => {
@@ -625,9 +664,18 @@ export default function App() {
                   <TrendingUp className="h-5 w-5 text-emerald-600" />
                   <h2 className="text-lg font-bold text-slate-900">Your Retirement Projection Dashboard</h2>
                 </div>
-                <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg text-xs font-semibold">
-                  <CheckCircle className="h-3.5 w-3.5" />
-                  Live Sync
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleDownloadReportClick}
+                    className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition-colors cursor-pointer"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    {isPaid ? "Download PDF Report" : "Download PDF Report ($1.00)"}
+                  </button>
+                  <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg text-xs font-semibold">
+                    <CheckCircle className="h-3.5 w-3.5" />
+                    Live Sync
+                  </div>
                 </div>
               </div>
 
@@ -917,6 +965,212 @@ export default function App() {
           <p className="text-slate-500 text-[10px]">Estimates are based on standard statutory rates, rules of 92/97, and basic actuarial reductions.</p>
         </div>
       </footer>
+
+      {/* Stripe-like Mock Checkout Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-slate-900/65 backdrop-blur-xs flex items-center justify-center z-[1000] p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full border border-slate-100 shadow-2xl overflow-hidden text-left text-slate-800">
+            {/* Modal Header */}
+            <div className="bg-slate-950 p-5 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-emerald-400" />
+                <span className="font-bold text-sm tracking-wide">Secure Stripe Checkout</span>
+              </div>
+              <button
+                onClick={() => setShowPaymentModal(false)}
+                className="text-slate-400 hover:text-white transition-colors text-lg cursor-pointer animate-none"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            {paymentStep === 'form' ? (
+              <div className="p-6 space-y-5">
+                {/* Product Info */}
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex justify-between items-center">
+                  <div>
+                    <span className="font-bold text-slate-800 text-xs block">Premium Retirement Report</span>
+                    <span className="text-[10px] text-slate-500 block">Personalized PSERS scenario projections</span>
+                  </div>
+                  <span className="text-sm font-extrabold text-slate-950">$1.00</span>
+                </div>
+
+                {/* Choose Delivery Method */}
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Select Delivery Method</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setDeliveryMethod('print')}
+                      className={`p-3 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                        deliveryMethod === 'print'
+                          ? 'border-emerald-500 bg-emerald-50/50 text-emerald-800'
+                          : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                      }`}
+                    >
+                      <span>🖨️ Print / Save as PDF</span>
+                      <span className="text-[9px] text-slate-400 font-normal">Save directly to device</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDeliveryMethod('email')}
+                      className={`p-3 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                        deliveryMethod === 'email'
+                          ? 'border-emerald-500 bg-emerald-50/50 text-emerald-800'
+                          : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                      }`}
+                    >
+                      <span>📧 Email PDF Report</span>
+                      <span className="text-[9px] text-slate-400 font-normal">Send to your inbox</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Conditional Email Field */}
+                {deliveryMethod === 'email' && (
+                  <div className="animate-fadeIn">
+                    <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1" htmlFor="delivery-email-input">
+                      Email Address
+                    </label>
+                    <input
+                      id="delivery-email-input"
+                      type="email"
+                      required
+                      value={emailAddress}
+                      onChange={(e) => setEmailAddress(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
+                      placeholder="teacher@district.edu"
+                    />
+                  </div>
+                )}
+
+                {/* Card form fields */}
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Cardholder Name</label>
+                    <input
+                      type="text"
+                      defaultValue="Matthew Landis"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
+                      placeholder="Jane Doe"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Card Number</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        defaultValue="4242 4242 4242 4242"
+                        maxLength={19}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
+                        placeholder="4242 4242 4242 4242"
+                      />
+                      <span className="absolute right-3 top-2 text-xs text-emerald-600 font-bold">VISA</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Expiration</label>
+                      <input
+                        type="text"
+                        defaultValue="12 / 29"
+                        maxLength={5}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-center text-slate-800"
+                        placeholder="MM / YY"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">CVC</label>
+                      <input
+                        type="text"
+                        defaultValue="123"
+                        maxLength={3}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-center text-slate-800"
+                        placeholder="123"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Demo Mode Notice */}
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2 text-[10px] text-slate-700 leading-normal">
+                  <Info className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-amber-800 block">Stripe Test Mode Active</strong>
+                    You can click the pay button directly to simulate the payment. Any card details will be accepted.
+                  </div>
+                </div>
+
+                {/* Pay Button */}
+                <button
+                  type="button"
+                  onClick={handleProcessPayment}
+                  disabled={isProcessingPayment || (deliveryMethod === 'email' && !emailAddress.trim())}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-55 disabled:hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                >
+                  {isProcessingPayment ? (
+                    <>
+                      <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                      Processing Payment...
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="h-4 w-4" />
+                      {deliveryMethod === 'print' ? "Pay $1.00 & Print Report" : "Pay $1.00 & Email Report"}
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : (
+              /* Success Screen */
+              <div className="p-6 text-center space-y-4 animate-scaleIn">
+                <div className="h-16 w-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
+                  <CheckCircle className="h-10 w-10 animate-bounce" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-base font-bold text-slate-900">Payment Successful!</h4>
+                  <p className="text-xs text-slate-500">Transaction processed securely via Stripe.</p>
+                </div>
+                
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 text-left">
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Delivery Confirmation</span>
+                  <p className="text-xs text-slate-700 leading-normal">
+                    🍏 Your premium retirement report has been successfully generated as a PDF and emailed to:
+                  </p>
+                  <p className="text-sm font-bold text-slate-950 font-mono break-all text-center p-2 bg-emerald-50/50 border border-emerald-100 rounded-lg text-emerald-800">
+                    {emailAddress}
+                  </p>
+                  <p className="text-[10px] text-slate-400 italic text-center">
+                    Please check your inbox (and spam folder) in a few minutes!
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.print();
+                    }}
+                    className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                  >
+                    🖨️ Print PDF Directly
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowPaymentModal(false)}
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,1 +1,42 @@
 @import "tailwindcss";
+
+@media print {
+  /* Hide non-report elements */
+  #app-header,
+  #variable-collector-section,
+  #ai-chat-navigator,
+  button,
+  .p-3.border-t,
+  form,
+  .scrollbar-none {
+    display: none !important;
+  }
+
+  /* Expand layout to full-width */
+  main {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #workspace {
+    display: block !important;
+  }
+
+  #dashboard-advisor-section {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Clean up page breaks and background colors */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    background-color: white !important;
+    color: #0f172a !important;
+  }
+}
