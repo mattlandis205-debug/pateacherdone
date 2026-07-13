@@ -1,0 +1,8 @@
+{
+  "name": "PA Teacher Retirement Navigator",
+  "description": "An empathetic, highly knowledgeable, and patient educational AI tool designed to help Pennsylvania public school teachers plan for retirement under the PSERS system.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
