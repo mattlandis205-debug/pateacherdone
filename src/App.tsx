@@ -670,7 +670,7 @@ export default function App() {
                     className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition-colors cursor-pointer"
                   >
                     <Download className="h-3.5 w-3.5" />
-                    {isPaid ? "Download PDF Report" : "Download PDF Report ($1.00)"}
+                    {isPaid ? "Download PDF Report" : "Download Premium PDF Report"}
                   </button>
                   <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg text-xs font-semibold">
                     <CheckCircle className="h-3.5 w-3.5" />
