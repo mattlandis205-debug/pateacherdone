@@ -76,7 +76,19 @@ export const PSERS_CLASSES: PSERSClass[] = [
   }
 ];
 
-export function calculatePSERSRetirement(profile: UserProfile): CalculationResult {
+export function calculatePSERSRetirement(rawProfile: UserProfile): CalculationResult {
+  // Sanitize numeric inputs (convert empty strings to 0 or appropriate defaults)
+  const profile = {
+    ...rawProfile,
+    currentAge: rawProfile.currentAge === "" ? 0 : Number(rawProfile.currentAge),
+    targetAge: rawProfile.targetAge === "" ? 0 : Number(rawProfile.targetAge),
+    serviceYears: rawProfile.serviceYears === "" ? 0 : Number(rawProfile.serviceYears),
+    fas: rawProfile.fas === "" ? 0 : Number(rawProfile.fas),
+    beneficiaryAge: rawProfile.beneficiaryAge === "" ? 0 : Number(rawProfile.beneficiaryAge),
+    lumpSumWithdrawal: rawProfile.lumpSumWithdrawal === "" ? 0 : Number(rawProfile.lumpSumWithdrawal),
+    cbsdPremiumAmount: rawProfile.cbsdPremiumAmount === undefined || rawProfile.cbsdPremiumAmount === "" ? 150 : Number(rawProfile.cbsdPremiumAmount),
+  };
+
   const currentClass = PSERS_CLASSES.find((c) => c.id === profile.classId) || PSERS_CLASSES[0];
   const explanationSteps: string[] = [];
 

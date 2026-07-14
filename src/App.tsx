@@ -337,7 +337,10 @@ export default function App() {
                         max="90"
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
                         value={profile.currentAge}
-                        onChange={(e) => updateProfileField("currentAge", parseInt(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          updateProfileField("currentAge", val === "" ? "" : parseInt(val));
+                        }}
                       />
                       <span className="absolute right-3 top-2 text-xs text-slate-400">yrs</span>
                     </div>
@@ -348,11 +351,14 @@ export default function App() {
                       <input
                         id="target-age-input"
                         type="number"
-                        min={profile.currentAge}
+                        min={profile.currentAge || 18}
                         max="100"
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
                         value={profile.targetAge}
-                        onChange={(e) => updateProfileField("targetAge", parseInt(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          updateProfileField("targetAge", val === "" ? "" : parseInt(val));
+                        }}
                       />
                       <span className="absolute right-3 top-2 text-xs text-emerald-600 font-bold">Target</span>
                     </div>
@@ -371,7 +377,10 @@ export default function App() {
                         step="0.1"
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
                         value={profile.serviceYears}
-                        onChange={(e) => updateProfileField("serviceYears", parseFloat(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          updateProfileField("serviceYears", val === "" ? "" : parseFloat(val));
+                        }}
                       />
                       <span className="absolute right-3 top-2 text-xs text-slate-400">yrs</span>
                     </div>
@@ -388,7 +397,10 @@ export default function App() {
                         step="500"
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-6 pr-3 text-sm focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
                         value={profile.fas}
-                        onChange={(e) => updateProfileField("fas", parseInt(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          updateProfileField("fas", val === "" ? "" : parseInt(val));
+                        }}
                       />
                     </div>
                   </div>
@@ -658,7 +670,10 @@ export default function App() {
                           max="100"
                           className="w-full bg-white border border-slate-200 rounded-xl py-1.5 px-3 text-sm focus:outline-none focus:border-emerald-500 font-semibold"
                           value={profile.beneficiaryAge}
-                          onChange={(e) => updateProfileField("beneficiaryAge", parseInt(e.target.value) || 0)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            updateProfileField("beneficiaryAge", val === "" ? "" : parseInt(val));
+                          }}
                         />
                       </div>
                     )}
@@ -725,7 +740,10 @@ export default function App() {
                         className="w-full bg-white border border-slate-200 rounded-lg py-1 px-2.5 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
                         value={profile.cbsdPremiumAmount !== undefined ? profile.cbsdPremiumAmount : ""}
                         placeholder="e.g. 150"
-                        onChange={(e) => updateProfileField("cbsdPremiumAmount", parseInt(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          updateProfileField("cbsdPremiumAmount", val === "" ? "" : parseInt(val));
+                        }}
                       />
                     </div>
                   )}

@@ -200,7 +200,13 @@ app.post("/api/send-report-email", async (req, res) => {
       return res.status(400).json({ error: "Retirement data is missing." });
     }
 
-    const { currentAge, targetAge, serviceYears, fas, classId, payoutOption, lumpSumWithdrawal } = profile;
+    const currentAge = profile.currentAge === "" ? 0 : Number(profile.currentAge);
+    const targetAge = profile.targetAge === "" ? 0 : Number(profile.targetAge);
+    const serviceYears = profile.serviceYears === "" ? 0 : Number(profile.serviceYears);
+    const fas = profile.fas === "" ? 0 : Number(profile.fas);
+    const lumpSumWithdrawal = profile.lumpSumWithdrawal === "" ? 0 : Number(profile.lumpSumWithdrawal);
+    const classId = profile.classId;
+    const payoutOption = profile.payoutOption;
     const {
       isVested,
       isSuperannuated,

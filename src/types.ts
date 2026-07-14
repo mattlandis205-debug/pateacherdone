@@ -13,19 +13,19 @@ export interface PSERSClass {
 }
 
 export interface UserProfile {
-  currentAge: number;
-  targetAge: number;
+  currentAge: number | "";
+  targetAge: number | "";
   classId: PSERSClassId;
-  serviceYears: number;
-  fas: number;
+  serviceYears: number | "";
+  fas: number | "";
   hasBeneficiary: boolean;
-  beneficiaryAge: number;
+  beneficiaryAge: number | "";
   payoutOption: "max" | "option1" | "option2" | "option3" | "option4";
-  lumpSumWithdrawal: number; // accumulated deductions + interest for Option 4
+  lumpSumWithdrawal: number | ""; // accumulated deductions + interest for Option 4
   pre65Healthcare: boolean; // Needs coverage before age 65
   post65Healthcare: boolean; // Medicare + HOP supplement interest
   cbsdIncentive?: boolean;
-  cbsdPremiumAmount?: number;
+  cbsdPremiumAmount?: number | "";
 }
 
 export interface CalculationResult {
