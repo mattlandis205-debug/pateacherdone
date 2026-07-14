@@ -145,16 +145,39 @@ export function calculatePSERSRetirement(profile: UserProfile): CalculationResul
 
   // 3. Early Retirement Penalty Calculation
   let earlyRetirementPenalty = 0;
+  let applySpecialEarly = false;
+
   if (!isSuperannuated && isVested) {
     const yearsUnder = targetSuperAge - profile.targetAge;
-    // Older classes have 3% per year penalty, newer have 5% per year penalty
-    const penaltyRate = (profile.classId === "T-C" || profile.classId === "T-D") ? 0.03 : 0.05;
-    earlyRetirementPenalty = yearsUnder * penaltyRate;
-    if (earlyRetirementPenalty > 0.50) earlyRetirementPenalty = 0.50; // Cap at 50% max reduction
+    const monthsUnder = yearsUnder * 12;
 
-    explanationSteps.push(
-      `📉 Early Retirement Penalty: You are retiring ${yearsUnder.toFixed(1)} years prior to age ${targetSuperAge}. This results in a ${(earlyRetirementPenalty * 100).toFixed(1)}% permanent reduction in your monthly pension.`
-    );
+    // Check for Special Early Retirement eligibility
+    if (profile.classId === "T-G") {
+      if (profile.targetAge >= 57 && profile.serviceYears >= 25) {
+        applySpecialEarly = true;
+      }
+    } else if (profile.classId !== "DC") {
+      // T-C, T-D, T-E, T-F, T-H
+      if (profile.targetAge >= 55 && profile.serviceYears >= 25) {
+        applySpecialEarly = true;
+      }
+    }
+
+    if (applySpecialEarly) {
+      // Special Early Retirement: 0.25% per month (3.0% per year)
+      earlyRetirementPenalty = monthsUnder * 0.0025;
+      if (earlyRetirementPenalty > 0.50) earlyRetirementPenalty = 0.50; // Cap at 50% max reduction
+      explanationSteps.push(
+        `📉 Special Early Retirement (25-Year Rule): Since you are at least age ${profile.classId === "T-G" ? "57" : "55"} with 25+ years of service, your pension is reduced by a lower penalty of only 0.25% per month (3.0% per year) for being ${yearsUnder.toFixed(1)} years under superannuation. This results in a ${(earlyRetirementPenalty * 100).toFixed(1)}% permanent reduction.`
+      );
+    } else {
+      // Standard Actuarial Reduction: estimated at 0.5% per month (6.0% per year)
+      earlyRetirementPenalty = monthsUnder * 0.005;
+      if (earlyRetirementPenalty > 0.65) earlyRetirementPenalty = 0.65; // Cap at 65% max reduction
+      explanationSteps.push(
+        `📉 Standard Actuarial Early Retirement: Since you do not meet the 25-year service rules (55/25 or 57/25), your benefit is reduced by a standard actuarial factor (estimated at 0.5% per month or 6.0% per year) for being ${yearsUnder.toFixed(1)} years under superannuation. This results in a ${(earlyRetirementPenalty * 100).toFixed(1)}% permanent reduction.`
+      );
+    }
   }
 
   // 4. Gross DB Pension core formula: FAS * Service * Multiplier
