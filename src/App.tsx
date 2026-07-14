@@ -119,50 +119,35 @@ export default function App() {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleDownloadReportClick = () => {
-    if (isPaid) {
-      if (deliveryMethod === 'email' && emailAddress) {
-        setPaymentStep('success');
-        setShowPaymentModal(true);
-      } else {
-        window.print();
-      }
-    } else {
-      setPaymentStep('form');
-      setShowPaymentModal(true);
-    }
+    setPaymentStep('form');
+    setShowPaymentModal(true);
   };
 
-  const handleProcessPayment = async () => {
-    setIsProcessingPayment(true);
-    try {
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          deliveryMethod,
-          emailAddress,
-        }),
-      });
-
-      if (!response.ok) {
-        let errMsg = "Failed to create checkout session.";
-        try {
-          const errData = await response.json();
-          if (errData && errData.error) errMsg = errData.error;
-        } catch (e) {}
-        throw new Error(errMsg);
+  const handleGenerateFreeReport = async () => {
+    if (deliveryMethod === 'print') {
+      setShowPaymentModal(false);
+      setTimeout(() => {
+        window.print();
+      }, 500);
+    } else {
+      setPaymentStep('success');
+      setEmailSendingStatus('sending');
+      try {
+        const response = await fetch("/api/send-report-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            emailAddress,
+            profile,
+            results,
+          }),
+        });
+        if (!response.ok) throw new Error("Failed to dispatch email");
+        setEmailSendingStatus("sent");
+      } catch (err) {
+        console.error("Email Dispatch Error:", err);
+        setEmailSendingStatus("error");
       }
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error("No checkout URL returned from server.");
-      }
-    } catch (err: any) {
-      console.error(err);
-      alert(`⚠️ Payment Error: ${err.message}`);
-      setIsProcessingPayment(false);
     }
   };
 
@@ -785,7 +770,7 @@ export default function App() {
                     <Download className="h-4 w-4 shrink-0" />
                     <span className="flex flex-col items-start leading-tight text-left">
                       <span>Download/Email Report</span>
-                      <span className="text-[9px] opacity-85 font-normal">{isPaid ? "(Unlocked)" : "(Premium)"}</span>
+                      <span className="text-[9px] opacity-85 font-normal">(Free Report)</span>
                     </span>
                   </button>
                   <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg text-xs font-semibold">
@@ -1108,8 +1093,8 @@ export default function App() {
             {/* Modal Header */}
             <div className="bg-slate-950 p-5 text-white flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-emerald-400" />
-                <span className="font-bold text-sm tracking-wide">Secure Stripe Checkout</span>
+                <FileText className="h-5 w-5 text-emerald-400" />
+                <span className="font-bold text-sm tracking-wide">Generate Retirement Report</span>
               </div>
               <button
                 onClick={() => setShowPaymentModal(false)}
@@ -1128,7 +1113,7 @@ export default function App() {
                     <span className="font-bold text-slate-800 text-xs block">Premium Retirement Report</span>
                     <span className="text-[10px] text-slate-500 block">Personalized PSERS scenario projections</span>
                   </div>
-                  <span className="text-sm font-extrabold text-slate-950">$1.00</span>
+                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full uppercase">Free Beta</span>
                 </div>
 
                 {/* Choose Delivery Method */}
@@ -1180,33 +1165,24 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Redirect Information */}
-                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3.5 flex gap-2.5 text-xs text-slate-600 leading-normal">
-                  <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+                {/* Free Access Information */}
+                <div className="bg-emerald-50/40 border border-emerald-100 rounded-xl p-3.5 flex gap-2.5 text-xs text-slate-600 leading-normal">
+                  <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-slate-800 block mb-0.5">Secure Checkout via Stripe</strong>
-                    Clicking the button below will redirect you to Stripe's secure hosted payment page to process the $1.00 charge. Your credentials are never stored on our servers.
+                    <strong className="text-emerald-800 block mb-0.5">Free Beta Access</strong>
+                    Your complete retirement projection will be instantly compiled and either printed or emailed directly to your inbox for free.
                   </div>
                 </div>
 
-                {/* Pay Button */}
+                {/* Generate Button */}
                 <button
                   type="button"
-                  onClick={handleProcessPayment}
-                  disabled={isProcessingPayment || (deliveryMethod === 'email' && !emailAddress.trim())}
+                  onClick={handleGenerateFreeReport}
+                  disabled={deliveryMethod === 'email' && !emailAddress.trim()}
                   className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-55 disabled:hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
                 >
-                  {isProcessingPayment ? (
-                    <>
-                      <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                      Processing Payment...
-                    </>
-                  ) : (
-                    <>
-                      <ShieldCheck className="h-4 w-4" />
-                      {deliveryMethod === 'print' ? "Pay $1.00 & Print Report" : "Pay $1.00 & Email Report"}
-                    </>
-                  )}
+                  <FileText className="h-4 w-4" />
+                  {deliveryMethod === 'print' ? "Compile & Print Report" : "Compile & Email Report"}
                 </button>
               </div>
             ) : (
@@ -1218,8 +1194,8 @@ export default function App() {
                       <CheckCircle className="h-10 w-10 animate-bounce" />
                     </div>
                     <div className="space-y-1">
-                      <h4 className="text-base font-bold text-slate-900">Payment Successful!</h4>
-                      <p className="text-xs text-slate-500">Transaction processed securely via Stripe.</p>
+                      <h4 className="text-base font-bold text-slate-900">Report Compiled!</h4>
+                      <p className="text-xs text-slate-500">Your custom retirement simulation is ready.</p>
                     </div>
                     
                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 text-left">
