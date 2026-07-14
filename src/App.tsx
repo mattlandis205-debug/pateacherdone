@@ -1056,7 +1056,11 @@ export default function App() {
 
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 py-8 px-4 border-t border-slate-800 text-center text-xs mt-12" id="app-footer">
-        <div className="max-w-7xl mx-auto space-y-3">
+        <div className="max-w-7xl mx-auto space-y-4">
+          <div className="bg-slate-800/30 border border-slate-800/60 rounded-xl p-4 max-w-2xl mx-auto text-slate-300 leading-relaxed">
+            <span className="font-bold text-emerald-400 block mb-1">🍏 A Note From the Creator</span>
+            This app was created by Matt Landis, a current PA teacher who spent hours trying to understand this confusing topic. He hopes this makes it easier on you!
+          </div>
           <div className="bg-slate-800/40 border border-slate-800 rounded-xl p-3.5 max-w-2xl mx-auto text-slate-400 leading-relaxed">
             <span className="font-bold text-amber-500 uppercase tracking-wider block mb-1">⚠️ Legal Disclaimer</span>
             This tool is for educational and simulation purposes only. Pension estimates are approximations and do not constitute official PSERS calculations, legal, tax, or financial advice. Please consult with PSERS directly or a certified financial planner before making any retirement decisions.
