@@ -28,20 +28,28 @@ import EducationalHub from "./components/EducationalHub";
 
 export default function App() {
   // 1. Initial State for User Profile
-  const [profile, setProfile] = useState<UserProfile>({
-    currentAge: 45,
-    targetAge: 62,
-    classId: "T-D",
-    serviceYears: 25,
-    fas: 75000,
-    hasBeneficiary: true,
-    beneficiaryAge: 60,
-    payoutOption: "max",
-    lumpSumWithdrawal: 112500, // Pre-calculated standard estimate (approx. 1.5 * serviceYears * FAS * 0.08)
-    pre65Healthcare: true,
-    post65Healthcare: true,
-    cbsdIncentive: false,
-    cbsdPremiumAmount: 150,
+  const [profile, setProfile] = useState<UserProfile>(() => {
+    const saved = localStorage.getItem("pa_teacher_profile");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return {
+      currentAge: 45,
+      targetAge: 62,
+      classId: "T-D",
+      serviceYears: 25,
+      fas: 75000,
+      hasBeneficiary: true,
+      beneficiaryAge: 60,
+      payoutOption: "max",
+      lumpSumWithdrawal: 112500, // Pre-calculated standard estimate (approx. 1.5 * serviceYears * FAS * 0.08)
+      pre65Healthcare: true,
+      post65Healthcare: true,
+      cbsdIncentive: false,
+      cbsdPremiumAmount: 150,
+    };
   });
 
   // Automatically estimate lump sum when key inputs change
@@ -78,6 +86,11 @@ export default function App() {
     }));
   };
 
+  // Persist profile changes to localStorage
+  useEffect(() => {
+    localStorage.setItem("pa_teacher_profile", JSON.stringify(profile));
+  }, [profile]);
+
   // 2. Perform pension calculation
   const results: CalculationResult = calculatePSERSRetirement(profile);
 
@@ -102,6 +115,7 @@ export default function App() {
   const [deliveryMethod, setDeliveryMethod] = useState<'print' | 'email'>('print');
   const [emailAddress, setEmailAddress] = useState('');
   const [paymentStep, setPaymentStep] = useState<'form' | 'success'>('form');
+  const [emailSendingStatus, setEmailSendingStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
   const handleDownloadReportClick = () => {
     if (isPaid) {
@@ -160,8 +174,9 @@ export default function App() {
 
     if (status === "success") {
       setIsPaid(true);
+      const decodedEmail = email ? decodeURIComponent(email) : "";
       if (method) setDeliveryMethod(method);
-      if (email) setEmailAddress(decodeURIComponent(email));
+      if (decodedEmail) setEmailAddress(decodedEmail);
 
       setPaymentStep("success");
       setShowPaymentModal(true);
@@ -173,6 +188,27 @@ export default function App() {
         setTimeout(() => {
           window.print();
         }, 1000);
+      } else if (method === "email" && decodedEmail) {
+        const sendEmail = async () => {
+          setEmailSendingStatus("sending");
+          try {
+            const response = await fetch("/api/send-report-email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                emailAddress: decodedEmail,
+                profile,
+                results,
+              }),
+            });
+            if (!response.ok) throw new Error("Failed to dispatch email");
+            setEmailSendingStatus("sent");
+          } catch (err) {
+            console.error("Email Dispatch Error:", err);
+            setEmailSendingStatus("error");
+          }
+        };
+        sendEmail();
       }
     }
   }, []);
@@ -1124,45 +1160,139 @@ export default function App() {
             ) : (
               /* Success Screen */
               <div className="p-6 text-center space-y-4 animate-scaleIn">
-                <div className="h-16 w-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
-                  <CheckCircle className="h-10 w-10 animate-bounce" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-base font-bold text-slate-900">Payment Successful!</h4>
-                  <p className="text-xs text-slate-500">Transaction processed securely via Stripe.</p>
-                </div>
-                
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 text-left">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Delivery Confirmation</span>
-                  <p className="text-xs text-slate-700 leading-normal">
-                    🍏 Your premium retirement report has been successfully generated as a PDF and emailed to:
-                  </p>
-                  <p className="text-sm font-bold text-slate-950 font-mono break-all text-center p-2 bg-emerald-50/50 border border-emerald-100 rounded-lg text-emerald-800">
-                    {emailAddress}
-                  </p>
-                  <p className="text-[10px] text-slate-400 italic text-center">
-                    Please check your inbox (and spam folder) in a few minutes!
-                  </p>
-                </div>
+                {deliveryMethod === 'print' ? (
+                  <>
+                    <div className="h-16 w-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
+                      <CheckCircle className="h-10 w-10 animate-bounce" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="text-base font-bold text-slate-900">Payment Successful!</h4>
+                      <p className="text-xs text-slate-500">Transaction processed securely via Stripe.</p>
+                    </div>
+                    
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 text-left">
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-bold">Report Ready</span>
+                      <p className="text-xs text-slate-700 leading-normal">
+                        Your premium report has been unlocked. Your browser's print dialog should have opened automatically.
+                      </p>
+                      <p className="text-[10px] text-slate-400 italic">
+                        Select "Save as PDF" in your print destination to download it to your device.
+                      </p>
+                    </div>
 
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      window.print();
-                    }}
-                    className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 rounded-xl text-xs transition-colors cursor-pointer"
-                  >
-                    🖨️ Print PDF Directly
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowPaymentModal(false)}
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition-colors cursor-pointer"
-                  >
-                    Done
-                  </button>
-                </div>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => window.print()}
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                      >
+                        🖨️ Re-open Print Dialog
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowPaymentModal(false)}
+                        className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                      >
+                        Done
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  /* Email Delivery States */
+                  <>
+                    {emailSendingStatus === 'sending' && (
+                      <div className="space-y-4 py-4">
+                        <div className="h-16 w-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-100">
+                          <RefreshCw className="h-8 w-8 animate-spin" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <h4 className="text-base font-bold text-slate-900">Generating & Emailing Report...</h4>
+                          <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                            Stripe payment succeeded! We are compiling your custom calculations and dispatching them to your inbox.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {emailSendingStatus === 'sent' && (
+                      <>
+                        <div className="h-16 w-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
+                          <CheckCircle className="h-10 w-10 animate-bounce" />
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="text-base font-bold text-slate-900">Email Dispatched!</h4>
+                          <p className="text-xs text-slate-500">Transaction processed securely via Stripe.</p>
+                        </div>
+                        
+                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 text-left">
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-bold">Delivery Confirmation</span>
+                          <p className="text-xs text-slate-700 leading-normal font-medium">
+                            🍏 Your premium retirement report has been successfully generated and emailed to:
+                          </p>
+                          <p className="text-xs font-bold text-slate-900 font-mono break-all text-center p-2 bg-emerald-50/50 border border-emerald-100 rounded-lg text-emerald-800">
+                            {emailAddress}
+                          </p>
+                          <p className="text-[10px] text-slate-400 italic text-center">
+                            Please check your inbox (and spam folder) in a few minutes!
+                          </p>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => window.print()}
+                            className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                          >
+                            🖨️ Also Print/Save PDF
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowPaymentModal(false)}
+                            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                          >
+                            Done
+                          </button>
+                        </div>
+                      </>
+                    )}
+
+                    {emailSendingStatus === 'error' && (
+                      <>
+                        <div className="h-16 w-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto border border-amber-200">
+                          <AlertTriangle className="h-10 w-10 animate-pulse" />
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="text-base font-bold text-slate-900">Email Delivery Failed</h4>
+                          <p className="text-xs text-slate-500">Stripe payment succeeded, but the email dispatcher failed.</p>
+                        </div>
+                        
+                        <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 space-y-2 text-left">
+                          <span className="text-[10px] text-amber-800 font-bold uppercase tracking-wider block font-bold">What to do</span>
+                          <p className="text-xs text-slate-700 leading-normal">
+                            Don't worry! Your account has been unlocked. You can immediately save or print your report directly by clicking the print button below.
+                          </p>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => window.print()}
+                            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                          >
+                            🖨️ Print / Save as PDF
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowPaymentModal(false)}
+                            className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             )}
           </div>
