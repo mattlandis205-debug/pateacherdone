@@ -361,7 +361,12 @@ app.post("/api/send-report-email", async (req, res) => {
         html: htmlContent,
       });
 
-      console.log("Resend API Success:", emailResponse);
+      console.log("Resend API Response:", emailResponse);
+
+      if (emailResponse.error) {
+        throw new Error(emailResponse.error.message || "Resend validation error");
+      }
+
       res.json({ success: true, id: emailResponse.data?.id });
     } else {
       console.log("===== TEST EMAIL DISPATCH =====");
