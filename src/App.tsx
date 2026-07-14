@@ -116,6 +116,7 @@ export default function App() {
   const [emailAddress, setEmailAddress] = useState('');
   const [paymentStep, setPaymentStep] = useState<'form' | 'success'>('form');
   const [emailSendingStatus, setEmailSendingStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleDownloadReportClick = () => {
     if (isPaid) {
@@ -926,109 +927,124 @@ export default function App() {
 
             </div>
 
-            {/* AI COMPASSIONATE ADVISOR (Chat Component) */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-[520px]" id="ai-chat-navigator">
-              
-              {/* Advisor Header */}
-              <div className="bg-slate-900 p-4 text-white flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
-                    <MessageSquare className="h-4.5 w-4.5" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold">Ask Your Navigator Advisor</h3>
-                    <p className="text-[10px] text-slate-400">Empathy-driven real-time PSERS & Healthcare guidance</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 bg-slate-800 text-slate-300 px-2 py-0.5 rounded-lg text-[10px]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Active Advisor
-                </div>
-              </div>
+            {/* Floating Advisor Button */}
+            {!isChatOpen && (
+              <button
+                onClick={() => setIsChatOpen(true)}
+                className="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-3 rounded-full shadow-2xl flex items-center gap-2 transition-all hover:scale-105 cursor-pointer border border-emerald-500/20"
+              >
+                <MessageSquare className="h-4.5 w-4.5" />
+                <span className="text-xs">Ask PSERS Advisor</span>
+                <span className="h-2 w-2 rounded-full bg-red-500 animate-ping absolute top-0 right-0 -mt-0.5 -mr-0.5"></span>
+                <span className="h-2 w-2 rounded-full bg-red-500 absolute top-0 right-0 -mt-0.5 -mr-0.5"></span>
+              </button>
+            )}
 
-              {/* Chat Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
-                {chatMessages.map((msg, idx) => (
-                  <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                    <div
-                      className={`max-w-[85%] rounded-2xl p-4.5 text-xs leading-relaxed whitespace-pre-wrap ${
-                        msg.role === "user"
-                          ? "bg-emerald-600 text-white rounded-tr-none"
-                          : "bg-white text-slate-800 border border-slate-100 rounded-tl-none shadow-xs"
-                      }`}
+            {/* Slide-out Advisor Drawer */}
+            {isChatOpen && (
+              <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs">
+                {/* Backdrop close area */}
+                <div className="flex-1" onClick={() => setIsChatOpen(false)} />
+                
+                {/* Drawer container */}
+                <div className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col text-slate-800">
+                  {/* Drawer Header */}
+                  <div className="bg-slate-950 p-4 text-white flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                        <MessageSquare className="h-4.5 w-4.5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-white">Ask Your Navigator Advisor</h3>
+                        <p className="text-[10px] text-slate-400">Empathy-driven PSERS & Healthcare guidance</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setIsChatOpen(false)}
+                      className="text-slate-400 hover:text-white text-lg transition-colors p-1 cursor-pointer"
                     >
-                      {msg.text}
-                    </div>
+                      ✕
+                    </button>
                   </div>
-                ))}
 
-                {isGenerating && (
-                  <div className="flex justify-start">
-                    <div className="bg-white text-slate-500 border border-slate-100 rounded-2xl p-4 text-xs flex items-center gap-2">
-                      <RefreshCw className="h-3.5 w-3.5 animate-spin text-emerald-500" />
-                      <span>Navigator is analyzing your retirement options...</span>
-                    </div>
+                  {/* Chat Messages */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
+                    {chatMessages.map((msg, idx) => (
+                      <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                        <div
+                          className={`max-w-[85%] rounded-2xl p-4 text-xs leading-relaxed whitespace-pre-wrap ${
+                            msg.role === "user"
+                              ? "bg-emerald-600 text-white rounded-tr-none"
+                              : "bg-white text-slate-800 border border-slate-100 rounded-tl-none shadow-xs"
+                          }`}
+                        >
+                          {msg.text}
+                        </div>
+                      </div>
+                    ))}
+
+                    {isGenerating && (
+                      <div className="flex justify-start">
+                        <div className="bg-white text-slate-500 border border-slate-100 rounded-2xl p-4 text-xs flex items-center gap-2">
+                          <RefreshCw className="h-3.5 w-3.5 animate-spin text-emerald-500" />
+                          <span>Navigator is analyzing your retirement options...</span>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={chatBottomRef} />
                   </div>
-                )}
-                <div ref={chatBottomRef} />
-              </div>
 
-              {/* Suggestion Prompts */}
-              <div className="p-3 border-t border-slate-100 bg-white flex gap-2 overflow-x-auto scrollbar-none">
-                <button
-                  onClick={() => askSuggestedQuestion("What is my early retirement penalty and how can I avoid it?")}
-                  className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[10px] font-medium rounded-full border border-slate-200 shrink-0 transition-colors"
-                >
-                  📉 Explaining penalties
-                </button>
-                <button
-                  onClick={() => askSuggestedQuestion("How does the 'Shrinking Pie' work for Option 4 lump sum and survivor options?")}
-                  className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[10px] font-medium rounded-full border border-slate-200 shrink-0 transition-colors"
-                >
-                  🥧 'Shrinking Pie' Analogy
-                </button>
-                <button
-                  onClick={() => askSuggestedQuestion("Am I eligible for Health Options Program (HOP) Premium Assistance?")}
-                  className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[10px] font-medium rounded-full border border-slate-200 shrink-0 transition-colors"
-                >
-                  🩺 Health HOP Assistance
-                </button>
-                <button
-                  onClick={() => askSuggestedQuestion("Can I roll over my Option 4 lump sum to avoid paying heavy immediate taxes?")}
-                  className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[10px] font-medium rounded-full border border-slate-200 shrink-0 transition-colors"
-                >
-                  💰 Lump sum rollover
-                </button>
-              </div>
+                  {/* Suggestion Prompts */}
+                  <div className="p-3 border-t border-slate-100 bg-white flex gap-2 overflow-x-auto scrollbar-none shrink-0">
+                    <button
+                      onClick={() => askSuggestedQuestion("What is my early retirement penalty and how can I avoid it?")}
+                      className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[10px] font-medium rounded-full border border-slate-200 shrink-0 transition-colors cursor-pointer"
+                    >
+                      📉 Explaining penalties
+                    </button>
+                    <button
+                      onClick={() => askSuggestedQuestion("How does the 'Shrinking Pie' work for Option 4 lump sum and survivor options?")}
+                      className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[10px] font-medium rounded-full border border-slate-200 shrink-0 transition-colors cursor-pointer"
+                    >
+                      🥧 'Shrinking Pie' Analogy
+                    </button>
+                    <button
+                      onClick={() => askSuggestedQuestion("Am I eligible for Health HOP Premium Assistance?")}
+                      className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[10px] font-medium rounded-full border border-slate-200 shrink-0 transition-colors cursor-pointer"
+                    >
+                      🩺 Health HOP Assistance
+                    </button>
+                  </div>
 
-              {/* Chat Input */}
-              <div className="p-3 border-t border-slate-100 bg-white">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }}
-                  className="flex gap-2"
-                >
-                  <input
-                    type="text"
-                    placeholder="Ask about FAS formulas, Option 1-4, healthcare coverage gap..."
-                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    disabled={isGenerating}
-                  />
-                  <button
-                    type="submit"
-                    disabled={isGenerating || !inputValue.trim()}
-                    className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-55 disabled:hover:bg-emerald-600 text-white rounded-xl px-4 py-2 flex items-center justify-center transition-colors shrink-0"
-                  >
-                    <Send className="h-4 w-4" />
-                  </button>
-                </form>
+                  {/* Chat Input */}
+                  <div className="p-3 border-t border-slate-100 bg-white shrink-0">
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }}
+                      className="flex gap-2"
+                    >
+                      <input
+                        type="text"
+                        placeholder="Ask about FAS formulas, Option 1-4..."
+                        className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors text-slate-800"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        disabled={isGenerating}
+                      />
+                      <button
+                        type="submit"
+                        disabled={isGenerating || !inputValue.trim()}
+                        className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-55 disabled:hover:bg-emerald-600 text-white rounded-xl px-4 py-2 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+                      >
+                        <Send className="h-4 w-4" />
+                      </button>
+                    </form>
+                  </div>
+                </div>
               </div>
-
-            </div>
+            )}
 
             {/* Educational Hub Knowledge Base */}
             <EducationalHub />
