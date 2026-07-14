@@ -20,7 +20,8 @@ import {
   CheckCircle,
   Clock,
   Briefcase,
-  Download
+  Download,
+  FileText
 } from "lucide-react";
 import { PSERS_CLASSES, calculatePSERSRetirement } from "./data/psersData";
 import { PSERSClassId, UserProfile, CalculationResult } from "./types";
