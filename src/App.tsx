@@ -931,7 +931,7 @@ export default function App() {
             {!isChatOpen && (
               <button
                 onClick={() => setIsChatOpen(true)}
-                className="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-3 rounded-full shadow-2xl flex items-center gap-2 transition-all hover:scale-105 cursor-pointer border border-emerald-500/20"
+                className="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-3 rounded-full shadow-2xl flex items-center gap-2 transition-all hover:scale-105 cursor-pointer border border-emerald-500/20 print:hidden"
               >
                 <MessageSquare className="h-4.5 w-4.5" />
                 <span className="text-xs">Ask PSERS Advisor</span>
@@ -942,7 +942,7 @@ export default function App() {
 
             {/* Slide-out Advisor Drawer */}
             {isChatOpen && (
-              <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs">
+              <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs print:hidden">
                 {/* Backdrop close area */}
                 <div className="flex-1" onClick={() => setIsChatOpen(false)} />
                 
@@ -1071,7 +1071,7 @@ export default function App() {
 
       {/* Stripe-like Mock Checkout Modal */}
       {showPaymentModal && (
-        <div className="fixed inset-0 bg-slate-900/65 backdrop-blur-xs flex items-center justify-center z-[1000] p-4">
+        <div id="payment-checkout-modal" className="fixed inset-0 bg-slate-900/65 backdrop-blur-xs flex items-center justify-center z-[1000] p-4 print:hidden">
           <div className="bg-white rounded-2xl max-w-md w-full border border-slate-100 shadow-2xl overflow-hidden text-left text-slate-800">
             {/* Modal Header */}
             <div className="bg-slate-950 p-5 text-white flex items-center justify-between">
