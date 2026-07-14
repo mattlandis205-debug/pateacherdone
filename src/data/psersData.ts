@@ -3,7 +3,7 @@ import { PSERSClass, UserProfile, CalculationResult } from "../types";
 export const PSERS_CLASSES: PSERSClass[] = [
   {
     id: "T-D",
-    name: "Class T-D (Hired before July 1, 2011 - 2.50% DB)",
+    name: "Class T-D (Hired 2001–2011, or pre-2001 upgraded - 2.50% DB)",
     type: "defined-benefit",
     multiplier: 0.025, // 2.5%
     vestingYears: 5,
@@ -13,7 +13,7 @@ export const PSERS_CLASSES: PSERSClass[] = [
   },
   {
     id: "T-C",
-    name: "Class T-C (Hired before July 1, 2011 - 2.00% DB)",
+    name: "Class T-C (Hired before July 1, 2001 did not upgrade - 2.00% DB)",
     type: "defined-benefit",
     multiplier: 0.020, // 2.0%
     vestingYears: 5,

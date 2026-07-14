@@ -459,7 +459,8 @@ export default function App() {
                     <span>📅</span> Which class am I? (By Date of Hire)
                   </span>
                   <ul className="space-y-1 text-[11px] list-disc pl-4 text-slate-600">
-                    <li><strong>Before July 1, 2011:</strong> You are likely in Class <span className="font-semibold text-slate-800">T-D</span> (default) or <span className="font-semibold text-slate-800">T-C</span>.</li>
+                    <li><strong>Before July 1, 2001:</strong> You are in Class <span className="font-semibold text-slate-800">T-D</span> (if you upgraded) or <span className="font-semibold text-slate-800">T-C</span> (if you didn't).</li>
+                    <li><strong>July 1, 2001 – June 30, 2011:</strong> You are automatically in Class <span className="font-semibold text-slate-800">T-D</span>.</li>
                     <li><strong>July 1, 2011 – June 30, 2019:</strong> You are in Class <span className="font-semibold text-slate-800">T-E</span> or <span className="font-semibold text-slate-800">T-F</span>.</li>
                     <li><strong>On/After July 1, 2019:</strong> You are in Class <span className="font-semibold text-slate-800">T-G</span>, <span className="font-semibold text-slate-800">T-H</span>, or <span className="font-semibold text-slate-800">DC</span>.</li>
                   </ul>
