@@ -3,7 +3,7 @@ import { PSERSClass, UserProfile, CalculationResult } from "../types";
 export const PSERS_CLASSES: PSERSClass[] = [
   {
     id: "T-D",
-    name: "Class T-D (Standard Older Class)",
+    name: "Class T-D (Hired before July 1, 2011 - 2.50% DB)",
     type: "defined-benefit",
     multiplier: 0.025, // 2.5%
     vestingYears: 5,
@@ -13,7 +13,7 @@ export const PSERS_CLASSES: PSERSClass[] = [
   },
   {
     id: "T-C",
-    name: "Class T-C (Alternative Older Class)",
+    name: "Class T-C (Hired before July 1, 2011 - 2.00% DB)",
     type: "defined-benefit",
     multiplier: 0.020, // 2.0%
     vestingYears: 5,
@@ -23,7 +23,7 @@ export const PSERS_CLASSES: PSERSClass[] = [
   },
   {
     id: "T-E",
-    name: "Class T-E (Vested Mid-Tier Class)",
+    name: "Class T-E (Hired 2011 - 2019 - 2.00% DB)",
     type: "defined-benefit",
     multiplier: 0.020, // 2.0%
     vestingYears: 10,
@@ -33,7 +33,7 @@ export const PSERS_CLASSES: PSERSClass[] = [
   },
   {
     id: "T-F",
-    name: "Class T-F (High-Contribution Mid-Tier)",
+    name: "Class T-F (Hired 2011 - 2019 - 2.50% DB)",
     type: "defined-benefit",
     multiplier: 0.025, // 2.5%
     vestingYears: 10,
@@ -43,7 +43,7 @@ export const PSERS_CLASSES: PSERSClass[] = [
   },
   {
     id: "T-G",
-    name: "Class T-G (Modern Hybrid - 1.25% DB)",
+    name: "Class T-G (Hired on/after July 1, 2019 - Hybrid 1.25%)",
     type: "hybrid",
     multiplier: 0.0125, // 1.25% DB
     vestingYears: 10, // 10 for DB, 3 for DC
@@ -54,7 +54,7 @@ export const PSERS_CLASSES: PSERSClass[] = [
   },
   {
     id: "T-H",
-    name: "Class T-H (Modern Hybrid - 1.00% DB)",
+    name: "Class T-H (Hired on/after July 1, 2019 - Hybrid 1.00%)",
     type: "hybrid",
     multiplier: 0.010, // 1.0% DB
     vestingYears: 10, // 10 for DB, 3 for DC
@@ -65,7 +65,7 @@ export const PSERS_CLASSES: PSERSClass[] = [
   },
   {
     id: "DC",
-    name: "Class DC (Defined Contribution Only)",
+    name: "Class DC (Hired on/after July 1, 2019 - 401k Only)",
     type: "defined-contribution",
     multiplier: 0,
     vestingYears: 3,

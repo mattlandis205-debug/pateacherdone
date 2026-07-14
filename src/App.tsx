@@ -453,6 +453,19 @@ export default function App() {
                   ))}
                 </div>
 
+                {/* Date of Hire Helper Card */}
+                <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3 text-xs leading-relaxed text-slate-600 space-y-1.5 mt-2">
+                  <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                    <span>📅</span> Which class am I? (By Date of Hire)
+                  </span>
+                  <ul className="space-y-1 text-[11px] list-disc pl-4 text-slate-600">
+                    <li><strong>Before July 1, 2011:</strong> You are likely in Class <span className="font-semibold text-slate-800">T-D</span> (default) or <span className="font-semibold text-slate-800">T-C</span>.</li>
+                    <li><strong>July 1, 2011 – June 30, 2019:</strong> You are in Class <span className="font-semibold text-slate-800">T-E</span> or <span className="font-semibold text-slate-800">T-F</span>.</li>
+                    <li><strong>On/After July 1, 2019:</strong> You are in Class <span className="font-semibold text-slate-800">T-G</span>, <span className="font-semibold text-slate-800">T-H</span>, or <span className="font-semibold text-slate-800">DC</span>.</li>
+                  </ul>
+                  <span className="text-[10px] text-slate-400 block pt-0.5">Note: You can verify your exact membership class on page 1 of your official annual PSERS Statement of Account.</span>
+                </div>
+
                 {/* Class Analogy Bubble */}
                 <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl flex gap-2">
                   <Sparkles className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
