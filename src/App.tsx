@@ -294,10 +294,10 @@ export default function App() {
               </div>
             </div>
             
-            {/* Live Stats Pill */}
-            <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100 self-start sm:self-auto">
-              <Clock className="h-4 w-4 text-slate-400" />
-              <span className="text-xs font-mono text-slate-600">Current Session UTC: 2026-07-13</span>
+            {/* Live Status Pill */}
+            <div className="flex items-center gap-1.5 bg-emerald-50/60 text-emerald-800 px-3 py-1.5 rounded-xl border border-emerald-100 self-start sm:self-auto text-xs font-semibold">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Live Calculator Active
             </div>
           </div>
         </div>
