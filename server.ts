@@ -494,7 +494,7 @@ app.post("/api/submit-lead", async (req, res) => {
     if (resend) {
       const emailResponse = await resend.emails.send({
         from: "PA Retirement Leads <reports@pateacherdone.com>",
-        to: "reports@pateacherdone.com",
+        to: "mattlandis205@gmail.com",
         subject: `🎯 New Warm PSERS Lead: ${emailAddress} (${serviceYears} yrs service)`,
         html: htmlContent,
       });
