@@ -117,6 +117,9 @@ export default function App() {
   const [emailAddress, setEmailAddress] = useState('');
   const [paymentStep, setPaymentStep] = useState<'form' | 'success'>('form');
   const [emailSendingStatus, setEmailSendingStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [matchWithAdvisor, setMatchWithAdvisor] = useState(true);
+  const [phoneAddress, setPhoneAddress] = useState('');
+  const [leadSubmitStatus, setLeadSubmitStatus] = useState<'idle' | 'submitting' | 'submitted' | 'error'>('idle');
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleDownloadReportClick = () => {
@@ -125,11 +128,29 @@ export default function App() {
   };
 
   const handleGenerateFreeReport = async () => {
+    setLeadSubmitStatus('idle');
+    setPhoneAddress('');
+
     if (deliveryMethod === 'print') {
-      setShowPaymentModal(false);
-      setTimeout(() => {
-        window.print();
-      }, 500);
+      if (matchWithAdvisor) {
+        try {
+          fetch("/api/submit-lead", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ emailAddress, phoneAddress: "", profile, results }),
+          });
+        } catch (e) {}
+        
+        setPaymentStep('success');
+        setTimeout(() => {
+          window.print();
+        }, 500);
+      } else {
+        setShowPaymentModal(false);
+        setTimeout(() => {
+          window.print();
+        }, 500);
+      }
     } else {
       setPaymentStep('success');
       setEmailSendingStatus('sending');
@@ -145,10 +166,44 @@ export default function App() {
         });
         if (!response.ok) throw new Error("Failed to dispatch email");
         setEmailSendingStatus("sent");
+        
+        if (matchWithAdvisor) {
+          try {
+            fetch("/api/submit-lead", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ emailAddress, phoneAddress: "", profile, results }),
+            });
+          } catch (e) {}
+        }
       } catch (err) {
         console.error("Email Dispatch Error:", err);
         setEmailSendingStatus("error");
       }
+    }
+  };
+
+  const handleGenerateLead = async () => {
+    setLeadSubmitStatus('submitting');
+    try {
+      const response = await fetch("/api/submit-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          emailAddress,
+          phoneAddress,
+          profile,
+          results,
+        }),
+      });
+      if (!response.ok) throw new Error("Lead submission failed");
+      setLeadSubmitStatus('submitted');
+      setTimeout(() => {
+        setShowPaymentModal(false);
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      setLeadSubmitStatus('error');
     }
   };
 
@@ -1149,7 +1204,7 @@ export default function App() {
                 </div>
 
                 {/* Conditional Email Field */}
-                {deliveryMethod === 'email' && (
+                {(deliveryMethod === 'email' || matchWithAdvisor) && (
                   <div className="animate-fadeIn">
                     <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1" htmlFor="delivery-email-input">
                       Email Address
@@ -1166,6 +1221,24 @@ export default function App() {
                   </div>
                 )}
 
+                {/* Advisor Matchmaker Checkbox */}
+                <label className="flex items-start gap-2.5 p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer shrink-0"
+                    checked={matchWithAdvisor}
+                    onChange={(e) => setMatchWithAdvisor(e.target.checked)}
+                  />
+                  <div className="space-y-0.5">
+                    <span className="text-xs font-bold text-slate-800 block">
+                      🤝 Match me with a local fiduciary advisor (Free)
+                    </span>
+                    <p className="text-[10px] text-slate-500 leading-normal">
+                      We match you with exactly one vetted fiduciary advisor in the Bucks County area. No spam, no list-selling—just a single, polite 15-minute review of your calculations.
+                    </p>
+                  </div>
+                </label>
+
                 {/* Free Access Information */}
                 <div className="bg-emerald-50/40 border border-emerald-100 rounded-xl p-3.5 flex gap-2.5 text-xs text-slate-600 leading-normal">
                   <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
@@ -1179,7 +1252,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={handleGenerateFreeReport}
-                  disabled={deliveryMethod === 'email' && !emailAddress.trim()}
+                  disabled={(deliveryMethod === 'email' || matchWithAdvisor) && !emailAddress.trim()}
                   className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-55 disabled:hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
                 >
                   <FileText className="h-4 w-4" />
@@ -1187,9 +1260,91 @@ export default function App() {
                 </button>
               </div>
             ) : (
-              /* Success Screen */
+              /* Success & Matchmaker Step 2 Screen */
               <div className="p-6 text-center space-y-4 animate-scaleIn">
-                {deliveryMethod === 'print' ? (
+                {matchWithAdvisor && leadSubmitStatus !== 'submitted' ? (
+                  <>
+                    <div className="h-12 w-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
+                      <CheckCircle className="h-7 w-7 animate-bounce" />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <h4 className="text-base font-bold text-slate-900">Report Ready & Dispatched!</h4>
+                      <p className="text-xs text-slate-500">
+                        {deliveryMethod === 'print' 
+                          ? "Print dialog has loaded. Let's finish your match!" 
+                          : `Sent successfully to ${emailAddress}`}
+                      </p>
+                    </div>
+
+                    <div className="bg-emerald-50/50 border border-emerald-100/60 p-4 rounded-xl text-left space-y-3">
+                      <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider block font-bold">Advisor Text Booking (Optional)</span>
+                      <p className="text-xs text-slate-700 leading-normal">
+                        To make booking your free 15-minute review session easy, would you like to receive a text message from our vetted Bucks County fiduciary advisor, <strong>Mark Foley, CFP®</strong>?
+                      </p>
+                      
+                      <div className="space-y-1">
+                        <label className="block text-[9px] font-semibold text-slate-500 uppercase tracking-wider" htmlFor="delivery-phone-input">
+                          Mobile Phone Number
+                        </label>
+                        <input
+                          id="delivery-phone-input"
+                          type="tel"
+                          value={phoneAddress}
+                          onChange={(e) => setPhoneAddress(e.target.value)}
+                          className="w-full bg-white border border-slate-200 rounded-lg py-1.5 px-3 text-xs focus:outline-none focus:border-emerald-500 font-semibold text-slate-800"
+                          placeholder="e.g. (215) 555-0199"
+                        />
+                      </div>
+                      
+                      {leadSubmitStatus === 'error' && (
+                        <p className="text-[10px] text-rose-600 font-semibold">
+                          ⚠️ Failed to request callback. Please try again.
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <button
+                        type="button"
+                        onClick={handleGenerateLead}
+                        disabled={leadSubmitStatus === 'submitting' || !phoneAddress.trim()}
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-55 disabled:hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                      >
+                        {leadSubmitStatus === 'submitting' ? (
+                          <>
+                            <RefreshCw className="h-3 w-3 animate-spin" />
+                            Requesting booking...
+                          </>
+                        ) : (
+                          "Yes, Request Text Booking"
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowPaymentModal(false)}
+                        className="w-full text-slate-500 hover:text-slate-800 text-xs font-semibold py-1 transition-colors cursor-pointer"
+                      >
+                        No thanks, I'll review on my own
+                      </button>
+                    </div>
+                  </>
+                ) : matchWithAdvisor && leadSubmitStatus === 'submitted' ? (
+                  <>
+                    <div className="h-16 w-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
+                      <CheckCircle className="h-10 w-10 animate-pulse" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="text-base font-bold text-slate-900">Text Booking Requested!</h4>
+                      <p className="text-xs text-slate-500">
+                        Mark Foley, CFP® will text you at <strong>{phoneAddress}</strong> shortly to schedule your review.
+                      </p>
+                    </div>
+                    <p className="text-[11px] text-slate-400 italic">
+                      Thank you for using PA Teacher Retirement Navigator!
+                    </p>
+                  </>
+                ) : deliveryMethod === 'print' ? (
                   <>
                     <div className="h-16 w-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
                       <CheckCircle className="h-10 w-10 animate-bounce" />

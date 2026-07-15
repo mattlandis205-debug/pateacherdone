@@ -388,6 +388,136 @@ app.post("/api/send-report-email", async (req, res) => {
   }
 });
 
+// Express matchmaker lead submission endpoint
+app.post("/api/submit-lead", async (req, res) => {
+  try {
+    const { emailAddress, phoneAddress, profile, results } = req.body;
+
+    if (!emailAddress) {
+      return res.status(400).json({ error: "Email address is required." });
+    }
+    if (!profile || !results) {
+      return res.status(400).json({ error: "Retirement data is missing." });
+    }
+
+    const currentAge = profile.currentAge === "" ? 0 : Number(profile.currentAge);
+    const targetAge = profile.targetAge === "" ? 0 : Number(profile.targetAge);
+    const serviceYears = profile.serviceYears === "" ? 0 : Number(profile.serviceYears);
+    const fas = profile.fas === "" ? 0 : Number(profile.fas);
+    const lumpSumWithdrawal = profile.lumpSumWithdrawal === "" ? 0 : Number(profile.lumpSumWithdrawal);
+    const classId = profile.classId;
+    const payoutOption = profile.payoutOption;
+    const cbsdIncentive = profile.cbsdIncentive;
+    const {
+      grossMonthlyPension,
+      netMonthlyPension,
+    } = results;
+
+    const formattedFas = fas.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    const formattedGross = grossMonthlyPension.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+    const formattedNet = netMonthlyPension.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+    const formattedLumpSum = lumpSumWithdrawal.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>New Warm PSERS Lead Match</title>
+  <style>
+    body { font-family: sans-serif; color: #334155; line-height: 1.5; padding: 20px; background-color: #f8fafc; }
+    .card { max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    h2 { color: #047857; font-size: 18px; margin-top: 0; margin-bottom: 16px; border-bottom: 2px solid #ecfdf5; padding-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+    td { padding: 6px 0; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+    td.label { color: #64748b; font-weight: 500; }
+    td.value { text-align: right; font-weight: 700; color: #0f172a; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🎯 New Fiduciary Lead Match</h2>
+    <table>
+      <tr>
+        <td class="label">Teacher's Email</td>
+        <td class="value">${emailAddress}</td>
+      </tr>
+      <tr>
+        <td class="label">Teacher's Phone (Booking Text)</td>
+        <td class="value">${phoneAddress || "Not Provided (Only Email match requested)"}</td>
+      </tr>
+      <tr>
+        <td class="label">School District</td>
+        <td class="value">${cbsdIncentive ? "Central Bucks School District (CBSD)" : "General PA District"}</td>
+      </tr>
+      <tr>
+        <td class="label">Membership Class</td>
+        <td class="value">Class ${classId}</td>
+      </tr>
+      <tr>
+        <td class="label">Current Age / Target Retirement</td>
+        <td class="value">${currentAge} yrs / ${targetAge} yrs</td>
+      </tr>
+      <tr>
+        <td class="label">Years of Service</td>
+        <td class="value">${serviceYears} Years</td>
+      </tr>
+      <tr>
+        <td class="label">Final Average Salary (FAS)</td>
+        <td class="value">${formattedFas}</td>
+      </tr>
+      <tr>
+        <td class="label">Selected Payout Option</td>
+        <td class="value">${payoutOption.toUpperCase()}</td>
+      </tr>
+      <tr>
+        <td class="label">Est. Gross Monthly Pension</td>
+        <td class="value">${formattedGross}</td>
+      </tr>
+      <tr>
+        <td class="label">Est. Net Monthly Take-Home</td>
+        <td class="value">${formattedNet}</td>
+      </tr>
+      <tr>
+        <td class="label">Option 4 Lump Sum Selection</td>
+        <td class="value">${payoutOption === 'option4' ? formattedLumpSum : "N/A"}</td>
+      </tr>
+    </table>
+    <p style="font-size: 11px; color: #94a3b8; margin: 0; text-align: center;">
+      This lead was generated live via pateacherdone.com matchmaker form.
+    </p>
+  </div>
+</body>
+</html>
+`;
+
+    if (resend) {
+      const emailResponse = await resend.emails.send({
+        from: "PA Retirement Leads <reports@pateacherdone.com>",
+        to: "reports@pateacherdone.com",
+        subject: `🎯 New Warm PSERS Lead: ${emailAddress} (${serviceYears} yrs service)`,
+        html: htmlContent,
+      });
+
+      if (emailResponse.error) {
+        throw new Error(emailResponse.error.message || "Resend lead dispatch error");
+      }
+
+      res.json({ success: true, id: emailResponse.data?.id });
+    } else {
+      console.log("===== TEST LEAD SUBMISSION DISPATCH =====");
+      console.log("Lead Email:", emailAddress);
+      console.log("Lead Phone:", phoneAddress);
+      console.log("Content Length:", htmlContent.length, "bytes");
+      console.log("=========================================");
+      res.json({ success: true, testMode: true });
+    }
+  } catch (error: any) {
+    console.error("Lead API Error:", error);
+    res.status(500).json({ error: error.message || "Failed to dispatch lead match." });
+  }
+});
+
 // Express serving Vite/dist
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
