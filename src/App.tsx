@@ -1234,7 +1234,7 @@ export default function App() {
                       🤝 Match me with a local fiduciary advisor (Free)
                     </span>
                     <p className="text-[10px] text-slate-500 leading-normal">
-                      We match you with exactly one vetted fiduciary advisor in the Bucks County area. No spam, no list-selling—just a single, polite 15-minute review of your calculations.
+                      We match you with exactly one vetted fiduciary advisor located right in Doylestown, PA. No spam, no list-selling—just a single, polite 15-minute review of your calculations.
                     </p>
                   </div>
                 </label>
@@ -1280,7 +1280,7 @@ export default function App() {
                     <div className="bg-emerald-50/50 border border-emerald-100/60 p-4 rounded-xl text-left space-y-3">
                       <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider block font-bold">Advisor Text Booking (Optional)</span>
                       <p className="text-xs text-slate-700 leading-normal">
-                        To make booking your free 15-minute review session easy, would you like to receive a text message from our vetted Bucks County fiduciary advisor, <a href="https://winthroppartners.com" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">Winthrop Partners</a>?
+                        To make booking your free 15-minute review session easy, would you like to receive a text message from <a href="https://winthroppartners.com" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">Winthrop Partners</a>, a trusted boutique fiduciary wealth management firm located right here in Doylestown?
                       </p>
                       
                       <div className="space-y-1">
@@ -1337,7 +1337,7 @@ export default function App() {
                     <div className="space-y-1">
                       <h4 className="text-base font-bold text-slate-900">Text Booking Requested!</h4>
                       <p className="text-xs text-slate-500">
-                        An advisor from <a href="https://winthroppartners.com" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">Winthrop Partners</a> will text you at <strong>{phoneAddress}</strong> shortly to schedule your review.
+                        An advisor from <a href="https://winthroppartners.com" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">Winthrop Partners</a> (our local Doylestown partner) will text you at <strong>{phoneAddress}</strong> shortly to schedule your review.
                       </p>
                     </div>
                     <p className="text-[11px] text-slate-400 italic">
