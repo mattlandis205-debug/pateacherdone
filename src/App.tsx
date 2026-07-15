@@ -1280,7 +1280,7 @@ export default function App() {
                     <div className="bg-emerald-50/50 border border-emerald-100/60 p-4 rounded-xl text-left space-y-3">
                       <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider block font-bold">Advisor Text Booking (Optional)</span>
                       <p className="text-xs text-slate-700 leading-normal">
-                        To make booking your free 15-minute review session easy, would you like to receive a text message from our vetted Bucks County fiduciary advisor, <strong>Mark Foley, CFP®</strong>?
+                        To make booking your free 15-minute review session easy, would you like to receive a text message from our vetted Bucks County fiduciary advisor, <a href="https://foleyhillsleygroup.bairdwealth.com/meet-the-team" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">Patrick Foley</a>?
                       </p>
                       
                       <div className="space-y-1">
@@ -1337,7 +1337,7 @@ export default function App() {
                     <div className="space-y-1">
                       <h4 className="text-base font-bold text-slate-900">Text Booking Requested!</h4>
                       <p className="text-xs text-slate-500">
-                        Mark Foley, CFP® will text you at <strong>{phoneAddress}</strong> shortly to schedule your review.
+                        <a href="https://foleyhillsleygroup.bairdwealth.com/meet-the-team" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">Patrick Foley</a> will text you at <strong>{phoneAddress}</strong> shortly to schedule your review.
                       </p>
                     </div>
                     <p className="text-[11px] text-slate-400 italic">
