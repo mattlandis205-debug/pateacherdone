@@ -1169,7 +1169,7 @@ export default function App() {
                     <span className="font-bold text-slate-800 text-xs block">Premium Retirement Report</span>
                     <span className="text-[10px] text-slate-500 block">Personalized PSERS scenario projections</span>
                   </div>
-                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full uppercase">Free Beta</span>
+                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full uppercase">Free Report</span>
                 </div>
 
                 {/* Choose Delivery Method */}
@@ -1231,10 +1231,10 @@ export default function App() {
                   />
                   <div className="space-y-0.5">
                     <span className="text-xs font-bold text-slate-800 block">
-                      🤝 Match me with a local fiduciary advisor (Free)
+                      🤝 Match me with a local financial advisor (Free)
                     </span>
                     <p className="text-[10px] text-slate-500 leading-normal">
-                      We match you with exactly one vetted fiduciary advisor located right in Doylestown, PA. No spam, no list-selling—just a single, polite 15-minute review of your calculations.
+                      We match you with exactly one vetted financial advisor located right in Doylestown, PA. No spam, no list-selling—just a single, polite 15-minute review of your calculations.
                     </p>
                   </div>
                 </label>
@@ -1243,7 +1243,7 @@ export default function App() {
                 <div className="bg-emerald-50/40 border border-emerald-100 rounded-xl p-3.5 flex gap-2.5 text-xs text-slate-600 leading-normal">
                   <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-emerald-800 block mb-0.5">Free Beta Access</strong>
+                    <strong className="text-emerald-800 block mb-0.5">Free Report Access</strong>
                     Your complete retirement projection will be instantly compiled and either printed or emailed directly to your inbox for free.
                   </div>
                 </div>
@@ -1280,7 +1280,7 @@ export default function App() {
                     <div className="bg-emerald-50/50 border border-emerald-100/60 p-4 rounded-xl text-left space-y-3">
                       <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider block font-bold">Advisor Text Booking (Optional)</span>
                       <p className="text-xs text-slate-700 leading-normal">
-                        To make booking your free 15-minute review session easy, would you like to receive a text message from <a href="https://winthroppartners.com" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">Winthrop Partners</a>, a trusted boutique fiduciary wealth management firm located right here in Doylestown?
+                        To make booking your free 15-minute review session easy, would you like to receive a text message from <a href="https://winthroppartners.com" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">Winthrop Partners</a>, a trusted boutique financial advisory firm located right here in Doylestown?
                       </p>
                       
                       <div className="space-y-1">
