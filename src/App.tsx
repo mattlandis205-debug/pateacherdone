@@ -37,6 +37,7 @@ export default function App() {
       } catch (e) {}
     }
     return {
+      district: "Central Bucks School District",
       currentAge: 45,
       targetAge: 62,
       classId: "T-D",
@@ -361,12 +362,35 @@ export default function App() {
                 <span className="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-1 rounded-lg">Step-by-Step</span>
               </div>
 
-              {/* 1. Age & Timeline */}
+              {/* 1. School District & Career Timeline */}
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
                   <User className="h-4 w-4 text-slate-400" />
-                  1. Age & Career Timeline
+                  1. School District & Career Timeline
                 </h3>
+
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1" htmlFor="school-district-input">PA School District</label>
+                  <div className="relative">
+                    <select
+                      id="school-district-input"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-sm focus:outline-none focus:border-emerald-500 font-semibold text-slate-800 cursor-pointer"
+                      value={profile.district || "Central Bucks School District"}
+                      onChange={(e) => updateProfileField("district", e.target.value)}
+                    >
+                      <option value="Central Bucks School District">Central Bucks School District</option>
+                      <option value="Council Rock School District">Council Rock School District</option>
+                      <option value="Pennridge School District">Pennridge School District</option>
+                      <option value="North Penn School District">North Penn School District</option>
+                      <option value="Neshaminy School District">Neshaminy School District</option>
+                      <option value="Centennial School District">Centennial School District</option>
+                      <option value="Bensalem Township School District">Bensalem Township School District</option>
+                      <option value="Souderton Area School District">Souderton Area School District</option>
+                      <option value="Other PA School District">Other PA School District</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-500 mb-1" htmlFor="current-age-input">Current Age</label>

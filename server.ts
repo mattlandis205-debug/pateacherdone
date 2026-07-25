@@ -267,6 +267,10 @@ app.post("/api/send-report-email", async (req, res) => {
       <div class="section-title">Retirement Setup</div>
       <table class="param-table">
         <tr>
+          <td class="label">School District</td>
+          <td class="val">${profile.district || "Central Bucks School District"}</td>
+        </tr>
+        <tr>
           <td class="label">Membership Class</td>
           <td class="val">Class ${classId}</td>
         </tr>
@@ -448,7 +452,7 @@ app.post("/api/submit-lead", async (req, res) => {
       </tr>
       <tr>
         <td class="label">School District</td>
-        <td class="value">${cbsdIncentive ? "Central Bucks School District (CBSD)" : "General PA District"}</td>
+        <td class="value">${profile.district || (cbsdIncentive ? "Central Bucks School District (CBSD)" : "General PA District")}</td>
       </tr>
       <tr>
         <td class="label">Membership Class</td>
@@ -495,7 +499,7 @@ app.post("/api/submit-lead", async (req, res) => {
       const emailResponse = await resend.emails.send({
         from: "PA Retirement Leads <reports@pateacherdone.com>",
         to: "mattlandis205@gmail.com",
-        subject: `🎯 New Warm PSERS Lead: ${emailAddress} (${serviceYears} yrs service)`,
+        subject: `🎯 New Warm PSERS Lead: ${emailAddress} (${profile.district || 'PA District'} - ${serviceYears} yrs service)`,
         html: htmlContent,
       });
 

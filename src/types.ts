@@ -13,6 +13,7 @@ export interface PSERSClass {
 }
 
 export interface UserProfile {
+  district: string;
   currentAge: number | "";
   targetAge: number | "";
   classId: PSERSClassId;
