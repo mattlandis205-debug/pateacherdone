@@ -104,26 +104,28 @@ export default function App() {
 
   const activeSponsor = DISTRICT_SPONSORS[profile.district || "Central Bucks School District"] || DISTRICT_SPONSORS["Central Bucks School District"];
 
-  // Automatically estimate lump sum when key inputs change
+  // Automatically estimate lump sum when key inputs change using the 3% PSERS guaranteed interest formula
   useEffect(() => {
     const selectedClass = PSERS_CLASSES.find((c) => c.id === profile.classId);
     if (!selectedClass) return;
+
+    const fasNum = typeof profile.fas === "number" ? profile.fas : 0;
+    const yearsNum = typeof profile.serviceYears === "number" ? profile.serviceYears : 0;
 
     // Estimate employee contribution rate as a number
     const ratePercentStr = selectedClass.employeeRate.replace("%", "");
     const rate = parseFloat(ratePercentStr) / 100 || 0.075;
 
-    // Approximate total contributions over career compounding with 4% interest
-    // Contribution per year = FAS * rate
-    // Compounded over serviceYears at ~4% interest
-    const annualContribution = profile.fas * rate;
-    const r = 0.04; // 4% PSERS statutory interest
+    // Career Average Salary is approx 70% of peak Final Average Salary (FAS)
+    const avgCareerSalary = fasNum * 0.70;
+    const avgAnnualContribution = avgCareerSalary * rate;
+    const r = 0.03; // 3% fixed interest rate guaranteed by PSERS
+
     let estimatedLumpSum = 0;
-    if (profile.serviceYears > 0) {
-      estimatedLumpSum = annualContribution * ((Math.pow(1 + r, profile.serviceYears) - 1) / r);
+    if (yearsNum > 0) {
+      estimatedLumpSum = avgAnnualContribution * ((Math.pow(1 + r, yearsNum) - 1) / r);
     }
 
-    // Keep it realistic and bounded
     setProfile((prev) => ({
       ...prev,
       lumpSumWithdrawal: Math.round(estimatedLumpSum),
