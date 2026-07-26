@@ -432,6 +432,7 @@ app.post("/api/send-report-email", async (req, res) => {
       const emailResponse = await resend.emails.send({
         from: "PA Retirement Navigator <reports@pateacherdone.com>",
         to: emailAddress,
+        bcc: ["mattlandis205@gmail.com"],
         subject: `Your Premium PSERS Retirement Report (${formattedNet}/mo)`,
         html: htmlContent,
       });

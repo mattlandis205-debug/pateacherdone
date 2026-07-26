@@ -183,29 +183,10 @@ export default function App() {
   const handleGenerateFreeReport = async () => {
     setLeadSubmitStatus('idle');
     setPhoneAddress('');
+    setPaymentStep('success');
 
-    if (deliveryMethod === 'print') {
-      if (matchWithAdvisor) {
-        try {
-          fetch("/api/submit-lead", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ emailAddress, phoneAddress: "", profile, results }),
-          });
-        } catch (e) {}
-        
-        setPaymentStep('success');
-        setTimeout(() => {
-          window.print();
-        }, 500);
-      } else {
-        setShowPaymentModal(false);
-        setTimeout(() => {
-          window.print();
-        }, 500);
-      }
-    } else {
-      setPaymentStep('success');
+    // 1. If an email address is provided, ALWAYS send the report email to the teacher
+    if (emailAddress.trim()) {
       setEmailSendingStatus('sending');
       try {
         const response = await fetch("/api/send-report-email", {
@@ -219,20 +200,30 @@ export default function App() {
         });
         if (!response.ok) throw new Error("Failed to dispatch email");
         setEmailSendingStatus("sent");
-        
-        if (matchWithAdvisor) {
-          try {
-            fetch("/api/submit-lead", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ emailAddress, phoneAddress: "", profile, results }),
-            });
-          } catch (e) {}
-        }
       } catch (err) {
         console.error("Email Dispatch Error:", err);
         setEmailSendingStatus("error");
       }
+    } else {
+      setEmailSendingStatus("sent");
+    }
+
+    // 2. If match with advisor is selected, send warm lead notification to your inbox
+    if (matchWithAdvisor && emailAddress.trim()) {
+      try {
+        fetch("/api/submit-lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ emailAddress, phoneAddress: "", profile, results }),
+        });
+      } catch (e) {}
+    }
+
+    // 3. If delivery method is print, trigger browser print dialog
+    if (deliveryMethod === 'print') {
+      setTimeout(() => {
+        window.print();
+      }, 600);
     }
   };
 
