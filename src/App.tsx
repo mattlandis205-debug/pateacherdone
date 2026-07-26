@@ -25,7 +25,44 @@ import {
 } from "lucide-react";
 import { PSERS_CLASSES, calculatePSERSRetirement } from "./data/psersData";
 import { PSERSClassId, UserProfile, CalculationResult } from "./types";
-import EducationalHub from "./components/EducationalHub";
+interface DistrictSponsor {
+  sponsorName: string;
+  location: string;
+  link: string;
+}
+
+const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
+  "Central Bucks School District": {
+    sponsorName: "Winthrop Partners",
+    location: "Doylestown, PA",
+    link: "https://winthroppartners.com",
+  },
+  "Pennridge School District": {
+    sponsorName: "Perkasie Financial",
+    location: "Perkasie, PA",
+    link: "#",
+  },
+  "Council Rock School District": {
+    sponsorName: "Winthrop Partners",
+    location: "Bucks County, PA",
+    link: "https://winthroppartners.com",
+  },
+  "Souderton Area School District": {
+    sponsorName: "Winthrop Partners",
+    location: "Bucks County, PA",
+    link: "https://winthroppartners.com",
+  },
+  "Quakertown Community School District": {
+    sponsorName: "Winthrop Partners",
+    location: "Bucks County, PA",
+    link: "https://winthroppartners.com",
+  },
+  "Other PA School District": {
+    sponsorName: "Winthrop Partners",
+    location: "Bucks County, PA",
+    link: "https://winthroppartners.com",
+  },
+};
 
 export default function App() {
   // 1. Initial State for User Profile
@@ -53,6 +90,8 @@ export default function App() {
       cbsdPremiumAmount: 150,
     };
   });
+
+  const activeSponsor = DISTRICT_SPONSORS[profile.district] || DISTRICT_SPONSORS["Central Bucks School District"];
 
   // Automatically estimate lump sum when key inputs change
   useEffect(() => {
@@ -1242,23 +1281,51 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Advisor Matchmaker Checkbox */}
-                <label className="flex items-start gap-2.5 p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    className="mt-1 h-4 w-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer shrink-0"
-                    checked={matchWithAdvisor}
-                    onChange={(e) => setMatchWithAdvisor(e.target.checked)}
-                  />
-                  <div className="space-y-0.5">
-                    <span className="text-xs font-bold text-slate-800 block">
-                      🤝 Match me with a local financial advisor (Free)
+                {/* Dynamic District Sponsor Match Card */}
+                <div className="bg-emerald-50/60 border border-emerald-200/70 rounded-xl p-3.5 space-y-2.5 text-left">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block font-mono">
+                      🏛️ Local Partner Match
                     </span>
-                    <p className="text-[10px] text-slate-500 leading-normal">
-                      We match you with exactly one vetted financial advisor located right in Doylestown, PA. No spam, no list-selling—just a single, polite 15-minute review of your calculations.
-                    </p>
+                    <span className="text-[10px] font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-full border border-slate-200">
+                      {activeSponsor.location}
+                    </span>
                   </div>
-                </label>
+
+                  <p className="text-xs text-slate-700 leading-relaxed">
+                    We&apos;ve matched you with{" "}
+                    {activeSponsor.link !== "#" ? (
+                      <a
+                        href={activeSponsor.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-700 font-bold hover:underline"
+                      >
+                        {activeSponsor.sponsorName}
+                      </a>
+                    ) : (
+                      <strong className="text-emerald-800 font-bold">{activeSponsor.sponsorName}</strong>
+                    )}
+                    , our verified local financial advisor sponsor for <strong>{profile.district || "your district"}</strong>.
+                  </p>
+
+                  <label className="flex items-start gap-2.5 cursor-pointer pt-2 border-t border-emerald-200/50 select-none">
+                    <input
+                      type="checkbox"
+                      className="mt-0.5 h-4 w-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer shrink-0"
+                      checked={matchWithAdvisor}
+                      onChange={(e) => setMatchWithAdvisor(e.target.checked)}
+                    />
+                    <div className="space-y-0.5">
+                      <span className="text-xs font-bold text-slate-800 block">
+                        Yes, connect me with {activeSponsor.sponsorName} for a free 15-min review
+                      </span>
+                      <span className="text-[10px] text-slate-500 block leading-tight">
+                        No spam, no list-selling—just a single polite review of your calculations.
+                      </span>
+                    </div>
+                  </label>
+                </div>
 
                 {/* Free Access Information */}
                 <div className="bg-emerald-50/40 border border-emerald-100 rounded-xl p-3.5 flex gap-2.5 text-xs text-slate-600 leading-normal">
@@ -1301,7 +1368,15 @@ export default function App() {
                     <div className="bg-emerald-50/50 border border-emerald-100/60 p-4 rounded-xl text-left space-y-3">
                       <span className="text-[10px] text-emerald-800 font-bold uppercase tracking-wider block font-bold">Advisor Text Booking (Optional)</span>
                       <p className="text-xs text-slate-700 leading-normal">
-                        To make booking your free 15-minute review session easy, would you like to receive a text message from <a href="https://winthroppartners.com" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">Winthrop Partners</a>, a trusted boutique financial advisory firm located right here in Doylestown?
+                        To make booking your free 15-minute review session easy, would you like to receive a text message from{" "}
+                        {activeSponsor.link !== "#" ? (
+                          <a href={activeSponsor.link} target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">
+                            {activeSponsor.sponsorName}
+                          </a>
+                        ) : (
+                          <strong className="text-emerald-800">{activeSponsor.sponsorName}</strong>
+                        )}
+                        , our trusted local financial advisor partner in {activeSponsor.location}?
                       </p>
                       
                       <div className="space-y-1">
@@ -1358,7 +1433,15 @@ export default function App() {
                     <div className="space-y-1">
                       <h4 className="text-base font-bold text-slate-900">Text Booking Requested!</h4>
                       <p className="text-xs text-slate-500">
-                        An advisor from <a href="https://winthroppartners.com" target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">Winthrop Partners</a> (our local Doylestown partner) will text you at <strong>{phoneAddress}</strong> shortly to schedule your review.
+                        An advisor from{" "}
+                        {activeSponsor.link !== "#" ? (
+                          <a href={activeSponsor.link} target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold hover:underline">
+                            {activeSponsor.sponsorName}
+                          </a>
+                        ) : (
+                          <strong>{activeSponsor.sponsorName}</strong>
+                        )}
+                        {" "}will text you at <strong>{phoneAddress}</strong> shortly to schedule your review.
                       </p>
                     </div>
                     <p className="text-[11px] text-slate-400 italic">
@@ -1413,7 +1496,7 @@ export default function App() {
                         <div className="space-y-1.5">
                           <h4 className="text-base font-bold text-slate-900">Generating & Emailing Report...</h4>
                           <p className="text-xs text-slate-500 max-w-xs mx-auto">
-                            Stripe payment succeeded! We are compiling your custom calculations and dispatching them to your inbox.
+                            Compiling your custom calculations and dispatching them to your inbox.
                           </p>
                         </div>
                       </div>
@@ -1426,7 +1509,6 @@ export default function App() {
                         </div>
                         <div className="space-y-1">
                           <h4 className="text-base font-bold text-slate-900">Email Dispatched!</h4>
-                          <p className="text-xs text-slate-500">Transaction processed securely via Stripe.</p>
                         </div>
                         
                         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 text-left">
@@ -1462,39 +1544,16 @@ export default function App() {
                     )}
 
                     {emailSendingStatus === 'error' && (
-                      <>
-                        <div className="h-16 w-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto border border-amber-200">
-                          <AlertTriangle className="h-10 w-10 animate-pulse" />
-                        </div>
-                        <div className="space-y-1">
-                          <h4 className="text-base font-bold text-slate-900">Email Delivery Failed</h4>
-                          <p className="text-xs text-slate-500">Stripe payment succeeded, but the email dispatcher failed.</p>
-                        </div>
-                        
-                        <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 space-y-2 text-left">
-                          <span className="text-[10px] text-amber-800 font-bold uppercase tracking-wider block font-bold">What to do</span>
-                          <p className="text-xs text-slate-700 leading-normal">
-                            Don't worry! Your account has been unlocked. You can immediately save or print your report directly by clicking the print button below.
-                          </p>
-                        </div>
-
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => window.print()}
-                            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition-colors cursor-pointer"
-                          >
-                            🖨️ Print / Save as PDF
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setShowPaymentModal(false)}
-                            className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 rounded-xl text-xs transition-colors cursor-pointer"
-                          >
-                            Close
-                          </button>
-                        </div>
-                      </>
+                      <div className="space-y-3">
+                        <p className="text-xs text-rose-600 font-semibold">⚠️ Failed to dispatch report email.</p>
+                        <button
+                          type="button"
+                          onClick={() => setShowPaymentModal(false)}
+                          className="bg-slate-100 text-slate-800 px-4 py-2 rounded-xl text-xs font-bold"
+                        >
+                          Close
+                        </button>
+                      </div>
                     )}
                   </>
                 )}
