@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import { PSERS_CLASSES, calculatePSERSRetirement } from "./data/psersData";
 import { PSERSClassId, UserProfile, CalculationResult } from "./types";
+import EducationalHub from "./components/EducationalHub";
+
 interface DistrictSponsor {
   sponsorName: string;
   location: string;
@@ -40,7 +42,7 @@ const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
   "Pennridge School District": {
     sponsorName: "Perkasie Financial",
     location: "Perkasie, PA",
-    link: "#",
+    link: "https://pateacherdone.com",
   },
   "Council Rock School District": {
     sponsorName: "Winthrop Partners",
@@ -67,13 +69,7 @@ const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
 export default function App() {
   // 1. Initial State for User Profile
   const [profile, setProfile] = useState<UserProfile>(() => {
-    const saved = localStorage.getItem("pa_teacher_profile");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {}
-    }
-    return {
+    const defaultProfile: UserProfile = {
       district: "Central Bucks School District",
       currentAge: 45,
       targetAge: 62,
@@ -89,9 +85,18 @@ export default function App() {
       cbsdIncentive: false,
       cbsdPremiumAmount: 150,
     };
+
+    const saved = localStorage.getItem("pa_teacher_profile");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return { ...defaultProfile, ...parsed };
+      } catch (e) {}
+    }
+    return defaultProfile;
   });
 
-  const activeSponsor = DISTRICT_SPONSORS[profile.district] || DISTRICT_SPONSORS["Central Bucks School District"];
+  const activeSponsor = DISTRICT_SPONSORS[profile.district || "Central Bucks School District"] || DISTRICT_SPONSORS["Central Bucks School District"];
 
   // Automatically estimate lump sum when key inputs change
   useEffect(() => {
