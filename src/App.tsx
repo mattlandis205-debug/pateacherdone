@@ -801,8 +801,8 @@ export default function App() {
                       onChange={(e) => updateProfileField("cbsdIncentive", e.target.checked)}
                     />
                     <div>
-                      <span className="text-xs font-bold text-slate-700 block">I am a CBSD staff member retiring the first eligible year and qualify for my current healthcare premium</span>
-                      <span className="text-[10px] text-slate-500 block">Keeps active district rate pre-65 if retiring at 35 years of service.</span>
+                      <span className="text-xs font-bold text-slate-700 block">I will qualify for my current healthcare premium, as per my district's contract</span>
+                      <span className="text-[10px] text-slate-500 block">Keeps active district rate pre-65 if retiring at your first eligible year.</span>
                     </div>
                   </label>
 
