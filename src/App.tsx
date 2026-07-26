@@ -47,10 +47,10 @@ const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
     link: "https://pateacherdone.com",
   },
   "Council Rock School District": {
-    sponsorName: "Paragon Wealth Management",
-    location: "Bucks County, PA",
+    sponsorName: "Anthony Petsis & Associates",
+    location: "Newtown, PA",
     link: "https://pateacherdone.com",
-    logoUrl: "/paragon-logo.png",
+    logoUrl: "/petsis-logo.jpg",
   },
   "Souderton Area School District": {
     sponsorName: "Paragon Wealth Management",
