@@ -871,20 +871,25 @@ export default function App() {
             
             {/* Live Financial Projection Card */}
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-emerald-600" />
-                  <h2 className="text-lg font-bold text-slate-900">Your Retirement Projection Dashboard</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    <TrendingUp className="h-4.5 w-4.5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Your Retirement Projection Dashboard</h2>
+                    <p className="text-[11px] text-slate-500">Real-time breakdown of pension checks & lump-sum options</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 self-start sm:self-auto">
                   <button
                     onClick={handleDownloadReportClick}
-                    className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl shadow-xs transition-colors cursor-pointer"
+                    className="flex items-center gap-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                   >
                     <Download className="h-4 w-4 shrink-0" />
                     <span className="flex flex-col items-start leading-tight text-left">
-                      <span>Download/Email Report</span>
-                      <span className="text-[9px] opacity-85 font-normal">(Free Report)</span>
+                      <span className="font-bold tracking-wide">Download / Email Report</span>
+                      <span className="text-[9px] opacity-90 font-normal">Free Official PDF Summary</span>
                     </span>
                   </button>
                 </div>
@@ -892,60 +897,68 @@ export default function App() {
 
               {/* Top Summary Badges */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className={`p-3 rounded-xl border text-center ${results.isVested ? "bg-emerald-50/50 border-emerald-100" : "bg-rose-50/50 border-rose-100"}`}>
+                <div className={`p-3 rounded-xl border text-center transition-all ${results.isVested ? "bg-emerald-50/60 border-emerald-200/80" : "bg-rose-50/60 border-rose-200/80"}`}>
                   <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-bold">Vested Status</span>
                   <span className={`text-xs font-extrabold mt-1 inline-block ${results.isVested ? "text-emerald-700" : "text-rose-700"}`}>
-                    {results.isVested ? "Fully Vested" : "Not Vested Yet"}
+                    {results.isVested ? "✓ Fully Vested" : "Not Vested Yet"}
                   </span>
                 </div>
 
-                <div className={`p-3 rounded-xl border text-center ${results.isSuperannuated ? "bg-emerald-50/50 border-emerald-100" : "bg-amber-50/50 border-amber-100"}`}>
+                <div className={`p-3 rounded-xl border text-center transition-all ${results.isSuperannuated ? "bg-emerald-50/60 border-emerald-200/80" : "bg-amber-50/60 border-amber-200/80"}`}>
                   <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-bold">Retirement Type</span>
                   <span className={`text-xs font-extrabold mt-1 inline-block ${results.isSuperannuated ? "text-emerald-700" : "text-amber-700"}`}>
                     {results.isSuperannuated ? "Superannuation (Full)" : "Early (Reduced)"}
                   </span>
                 </div>
 
-                <div className={`p-3 rounded-xl border text-center ${results.qualifiesForPremiumAssistance ? "bg-emerald-50/50 border-emerald-100" : "bg-slate-50 border-slate-200"}`}>
+                <div className={`p-3 rounded-xl border text-center transition-all ${results.qualifiesForPremiumAssistance ? "bg-emerald-50/60 border-emerald-200/80" : "bg-slate-50 border-slate-200"}`}>
                   <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-bold">Premium Assistance</span>
                   <span className={`text-xs font-extrabold mt-1 inline-block ${results.qualifiesForPremiumAssistance ? "text-emerald-700" : "text-slate-500"}`}>
-                    {results.qualifiesForPremiumAssistance ? "$100/mo Credit" : "Not Eligible"}
+                    {results.qualifiesForPremiumAssistance ? "$100/mo HOP Credit" : "Not Eligible"}
                   </span>
                 </div>
               </div>
 
-              {/* Major Calculated Totals */}
+              {/* Major Calculated Totals - Hero Presentation */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 
                 {/* Gross Pension */}
-                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col justify-between">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between relative overflow-hidden">
                   <div>
-                    <span className="text-xs text-slate-500 font-semibold block uppercase">Gross Pension Check</span>
-                    <h3 className="text-3xl font-extrabold text-slate-900 mt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Gross Pension Check</span>
+                      <span className="text-[10px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Pre-Deductions</span>
+                    </div>
+                    <h3 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mt-2">
                       ${results.grossMonthlyPension.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      <span className="text-xs text-slate-500 font-normal"> /mo</span>
+                      <span className="text-xs text-slate-400 font-semibold"> /mo</span>
                     </h3>
                   </div>
-                  <p className="text-[11px] text-slate-600 mt-2 leading-relaxed font-mono">
-                    Annual Gross: ${(results.grossMonthlyPension * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr
-                  </p>
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+                    <span>Annual Gross Pay</span>
+                    <span className="font-bold text-slate-900 font-mono">${(results.grossMonthlyPension * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
+                  </div>
                 </div>
 
-                {/* Net Take-Home */}
-                <div className="p-5 rounded-2xl bg-emerald-600 text-white flex flex-col justify-between relative overflow-hidden shadow-xs">
-                  <div className="absolute right-[-15px] bottom-[-15px] text-emerald-500 opacity-20 transform rotate-12">
-                    <DollarSign className="h-28 w-28" />
+                {/* Net Take-Home Hero Card */}
+                <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 text-white flex flex-col justify-between relative overflow-hidden shadow-md">
+                  <div className="absolute right-[-15px] bottom-[-15px] text-emerald-400 opacity-20 transform rotate-12 pointer-events-none">
+                    <DollarSign className="h-32 w-32" />
                   </div>
                   <div>
-                    <span className="text-xs text-emerald-100 font-semibold block uppercase">Net Monthly Take-Home</span>
-                    <h3 className="text-3xl font-extrabold mt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold text-emerald-200 uppercase tracking-wider">Net Monthly Take-Home</span>
+                      <span className="text-[10px] font-bold bg-white/20 text-white px-2 py-0.5 rounded-full backdrop-blur-xs">Final Estimate</span>
+                    </div>
+                    <h3 className="text-3xl sm:text-4xl font-black tracking-tight mt-2 text-white">
                       ${results.netMonthlyPension.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      <span className="text-xs text-emerald-100 font-normal"> /mo</span>
+                      <span className="text-xs text-emerald-200 font-normal"> /mo</span>
                     </h3>
                   </div>
-                  <p className="text-[11px] text-emerald-100 mt-2 leading-relaxed z-10">
-                    Gross, minus healthcare costs + premium assistance credit.
-                  </p>
+                  <div className="mt-4 pt-3 border-t border-emerald-500/50 flex items-center justify-between text-xs text-emerald-100 z-10">
+                    <span>Includes HOP Credit & Healthcare</span>
+                    <span className="font-bold text-white font-mono">${(results.netMonthlyPension * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}/yr</span>
+                  </div>
                 </div>
 
               </div>
