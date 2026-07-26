@@ -166,17 +166,19 @@ export default function App() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
-  const [deliveryMethod, setDeliveryMethod] = useState<'print' | 'email'>('print');
+  const [deliveryMethod, setDeliveryMethod] = useState<'print' | 'email'>('email');
   const [emailAddress, setEmailAddress] = useState('');
   const [paymentStep, setPaymentStep] = useState<'form' | 'success'>('form');
   const [emailSendingStatus, setEmailSendingStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
-  const [matchWithAdvisor, setMatchWithAdvisor] = useState(true);
+  const [matchWithAdvisor, setMatchWithAdvisor] = useState(false);
   const [phoneAddress, setPhoneAddress] = useState('');
   const [leadSubmitStatus, setLeadSubmitStatus] = useState<'idle' | 'submitting' | 'submitted' | 'error'>('idle');
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleDownloadReportClick = () => {
     setPaymentStep('form');
+    setDeliveryMethod('email');
+    setMatchWithAdvisor(false);
     setShowPaymentModal(true);
   };
 
@@ -1230,31 +1232,10 @@ export default function App() {
             {/* Modal Body */}
             {paymentStep === 'form' ? (
               <div className="p-6 space-y-5">
-                {/* Product Info */}
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex justify-between items-center">
-                  <div>
-                    <span className="font-bold text-slate-800 text-xs block">Premium Retirement Report</span>
-                    <span className="text-[10px] text-slate-500 block">Personalized PSERS scenario projections</span>
-                  </div>
-                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full uppercase">Free Report</span>
-                </div>
-
                 {/* Choose Delivery Method */}
                 <div className="space-y-2">
                   <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Select Delivery Method</label>
                   <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setDeliveryMethod('print')}
-                      className={`p-3 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
-                        deliveryMethod === 'print'
-                          ? 'border-emerald-500 bg-emerald-50/50 text-emerald-800'
-                          : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
-                      }`}
-                    >
-                      <span>🖨️ Print / Save as PDF</span>
-                      <span className="text-[9px] text-slate-400 font-normal">Save directly to device</span>
-                    </button>
                     <button
                       type="button"
                       onClick={() => setDeliveryMethod('email')}
@@ -1266,6 +1247,18 @@ export default function App() {
                     >
                       <span>📧 Email PDF Report</span>
                       <span className="text-[9px] text-slate-400 font-normal">Send to your inbox</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDeliveryMethod('print')}
+                      className={`p-3 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                        deliveryMethod === 'print'
+                          ? 'border-emerald-500 bg-emerald-50/50 text-emerald-800'
+                          : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                      }`}
+                    >
+                      <span>🖨️ Print / Save as PDF</span>
+                      <span className="text-[9px] text-slate-400 font-normal">Save directly to device</span>
                     </button>
                   </div>
                 </div>
@@ -1357,7 +1350,7 @@ export default function App() {
                   className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-55 disabled:hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
                 >
                   <FileText className="h-4 w-4" />
-                  {deliveryMethod === 'print' ? "Compile & Print Report" : "Compile & Email Report"}
+                  {matchWithAdvisor ? "Compile Report & Connect with Advisor" : "Compile Report"}
                 </button>
               </div>
             ) : (
