@@ -381,11 +381,8 @@ export default function App() {
                       <option value="Central Bucks School District">Central Bucks School District</option>
                       <option value="Council Rock School District">Council Rock School District</option>
                       <option value="Pennridge School District">Pennridge School District</option>
-                      <option value="North Penn School District">North Penn School District</option>
-                      <option value="Neshaminy School District">Neshaminy School District</option>
-                      <option value="Centennial School District">Centennial School District</option>
-                      <option value="Bensalem Township School District">Bensalem Township School District</option>
                       <option value="Souderton Area School District">Souderton Area School District</option>
+                      <option value="Quakertown Community School District">Quakertown Community School District</option>
                       <option value="Other PA School District">Other PA School District</option>
                     </select>
                   </div>
