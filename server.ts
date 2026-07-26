@@ -402,7 +402,7 @@ app.post("/api/send-report-email", async (req, res) => {
       <!-- District Sponsor Callout Block -->
       <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 18px; margin: 24px 0; text-align: left;">
         <div style="font-size: 10px; font-weight: 700; color: #047857; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
-          🏛️ Verified District Financial Sponsor
+          🏛️ Local District Financial Sponsor
         </div>
         ${activeSponsor.logoUrl ? `<div style="background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; display: inline-block; margin-bottom: 10px;"><img src="${activeSponsor.logoUrl}" alt="${activeSponsor.sponsorName}" style="height: 32px; display: block;" /></div>` : ''}
         <div style="font-size: 14px; font-weight: 700; color: #064e3b; margin-bottom: 6px;">

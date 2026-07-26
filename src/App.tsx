@@ -1319,7 +1319,7 @@ export default function App() {
                     ) : (
                       <strong className="text-emerald-800 font-bold">{activeSponsor.sponsorName}</strong>
                     )}
-                    , our verified local financial advisor sponsor for <strong>{profile.district || "your district"}</strong>.
+                    , our local financial advisor sponsor for <strong>{profile.district || "your district"}</strong>.
                   </p>
 
                   <label className="flex items-start gap-2.5 cursor-pointer pt-2 border-t border-emerald-200/50 select-none">
