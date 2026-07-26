@@ -22,6 +22,7 @@ interface DistrictSponsor {
   sponsorName: string;
   location: string;
   link: string;
+  logoUrl?: string;
 }
 
 const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
@@ -29,6 +30,7 @@ const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
     sponsorName: "Paragon Wealth Management",
     location: "Doylestown, PA",
     link: "https://pateacherdone.com",
+    logoUrl: "https://pateacherdone.com/paragon-logo.png",
   },
   "Pennridge School District": {
     sponsorName: "Perkasie Financial",
@@ -39,21 +41,25 @@ const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
     link: "https://pateacherdone.com",
+    logoUrl: "https://pateacherdone.com/paragon-logo.png",
   },
   "Souderton Area School District": {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
     link: "https://pateacherdone.com",
+    logoUrl: "https://pateacherdone.com/paragon-logo.png",
   },
   "Quakertown Community School District": {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
     link: "https://pateacherdone.com",
+    logoUrl: "https://pateacherdone.com/paragon-logo.png",
   },
   "Other PA School District": {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
     link: "https://pateacherdone.com",
+    logoUrl: "https://pateacherdone.com/paragon-logo.png",
   },
 };
 
@@ -395,11 +401,12 @@ app.post("/api/send-report-email", async (req, res) => {
 
       <!-- District Sponsor Callout Block -->
       <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 18px; margin: 24px 0; text-align: left;">
-        <div style="font-size: 10px; font-weight: 700; color: #047857; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+        <div style="font-size: 10px; font-weight: 700; color: #047857; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
           🏛️ Verified District Financial Sponsor
         </div>
+        ${activeSponsor.logoUrl ? `<div style="background: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; display: inline-block; margin-bottom: 10px;"><img src="${activeSponsor.logoUrl}" alt="${activeSponsor.sponsorName}" style="height: 32px; display: block;" /></div>` : ''}
         <div style="font-size: 14px; font-weight: 700; color: #064e3b; margin-bottom: 6px;">
-          Hosted in partnership with ${activeSponsor.sponsorName} (${activeSponsor.location})
+          Presented in partnership with ${activeSponsor.sponsorName} (${activeSponsor.location})
         </div>
         <p style="font-size: 12px; color: #047857; margin: 0 0 12px 0; line-height: 1.4;">
           Need an expert eye to review your PSERS lump-sum options or tax-saving strategies for ${districtName}? Request a polite, 15-minute calculation review.

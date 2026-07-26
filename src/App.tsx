@@ -31,6 +31,7 @@ interface DistrictSponsor {
   sponsorName: string;
   location: string;
   link: string;
+  logoUrl?: string;
 }
 
 const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
@@ -38,6 +39,7 @@ const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
     sponsorName: "Paragon Wealth Management",
     location: "Doylestown, PA",
     link: "https://pateacherdone.com",
+    logoUrl: "/paragon-logo.png",
   },
   "Pennridge School District": {
     sponsorName: "Perkasie Financial",
@@ -48,21 +50,25 @@ const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
     link: "https://pateacherdone.com",
+    logoUrl: "/paragon-logo.png",
   },
   "Souderton Area School District": {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
     link: "https://pateacherdone.com",
+    logoUrl: "/paragon-logo.png",
   },
   "Quakertown Community School District": {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
     link: "https://pateacherdone.com",
+    logoUrl: "/paragon-logo.png",
   },
   "Other PA School District": {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
     link: "https://pateacherdone.com",
+    logoUrl: "/paragon-logo.png",
   },
 };
 
@@ -1296,6 +1302,12 @@ export default function App() {
                       {activeSponsor.location}
                     </span>
                   </div>
+
+                  {activeSponsor.logoUrl && (
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200/80 inline-block shadow-2xs">
+                      <img src={activeSponsor.logoUrl} alt={activeSponsor.sponsorName} className="h-7 object-contain" />
+                    </div>
+                  )}
 
                   <p className="text-xs text-slate-700 leading-relaxed">
                     We&apos;ve matched you with{" "}
