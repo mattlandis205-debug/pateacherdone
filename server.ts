@@ -18,6 +18,45 @@ const stripe = stripeSecretKey ? new Stripe(stripeSecretKey) : null;
 const resendApiKey = process.env.RESEND_API_KEY || "";
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
+interface DistrictSponsor {
+  sponsorName: string;
+  location: string;
+  link: string;
+}
+
+const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
+  "Central Bucks School District": {
+    sponsorName: "Winthrop Partners",
+    location: "Doylestown, PA",
+    link: "https://winthroppartners.com",
+  },
+  "Pennridge School District": {
+    sponsorName: "Perkasie Financial",
+    location: "Perkasie, PA",
+    link: "https://pateacherdone.com",
+  },
+  "Council Rock School District": {
+    sponsorName: "Winthrop Partners",
+    location: "Bucks County, PA",
+    link: "https://winthroppartners.com",
+  },
+  "Souderton Area School District": {
+    sponsorName: "Winthrop Partners",
+    location: "Bucks County, PA",
+    link: "https://winthroppartners.com",
+  },
+  "Quakertown Community School District": {
+    sponsorName: "Winthrop Partners",
+    location: "Bucks County, PA",
+    link: "https://winthroppartners.com",
+  },
+  "Other PA School District": {
+    sponsorName: "Winthrop Partners",
+    location: "Bucks County, PA",
+    link: "https://winthroppartners.com",
+  },
+};
+
 // Initialize Google GenAI on the server
 const apiKey = process.env.GEMINI_API_KEY;
 const ai = apiKey
@@ -223,6 +262,9 @@ app.post("/api/send-report-email", async (req, res) => {
     const formattedNet = netMonthlyPension.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
     const formattedLumpSum = lumpSumWithdrawal.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
+    const districtName = profile.district || "Central Bucks School District";
+    const activeSponsor = DISTRICT_SPONSORS[districtName] || DISTRICT_SPONSORS["Central Bucks School District"];
+
     const htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -350,6 +392,22 @@ app.post("/api/send-report-email", async (req, res) => {
       <ul class="notes-list">
         ${explanationSteps.map((step: string) => `<li>${step}</li>`).join("")}
       </ul>
+
+      <!-- District Sponsor Callout Block -->
+      <div style="background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 18px; margin: 24px 0; text-align: left;">
+        <div style="font-size: 10px; font-weight: 700; color: #047857; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+          🏛️ Verified District Financial Sponsor
+        </div>
+        <div style="font-size: 14px; font-weight: 700; color: #064e3b; margin-bottom: 6px;">
+          Hosted in partnership with ${activeSponsor.sponsorName} (${activeSponsor.location})
+        </div>
+        <p style="font-size: 12px; color: #047857; margin: 0 0 12px 0; line-height: 1.4;">
+          Need an expert eye to review your PSERS lump-sum options or tax-saving strategies for ${districtName}? Request a polite, 15-minute calculation review.
+        </p>
+        <a href="${activeSponsor.link !== '#' ? activeSponsor.link : 'https://pateacherdone.com'}" target="_blank" style="display: inline-block; background-color: #059669; color: #ffffff; font-weight: 700; font-size: 12px; text-decoration: none; padding: 9px 16px; border-radius: 6px;">
+          Schedule Review with ${activeSponsor.sponsorName} →
+        </a>
+      </div>
     </div>
     <div class="footer">
       <p>This report was generated using the <a href="https://pateacherdone-437178307252.northamerica-northeast1.run.app">PA Teacher Retirement Navigator</a>.</p>

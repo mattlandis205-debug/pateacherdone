@@ -1454,14 +1454,14 @@ export default function App() {
                       <CheckCircle className="h-10 w-10 animate-bounce" />
                     </div>
                     <div className="space-y-1">
-                      <h4 className="text-base font-bold text-slate-900">Report Compiled!</h4>
-                      <p className="text-xs text-slate-500">Your custom retirement simulation is ready.</p>
+                      <h4 className="text-base font-bold text-slate-900">Your {profile.district || "District"} PSERS Estimate is Ready!</h4>
+                      <p className="text-xs text-emerald-700 font-medium">Hosted in partnership with <strong>{activeSponsor.sponsorName}</strong> ({activeSponsor.location}).</p>
                     </div>
                     
                     <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 text-left">
-                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-bold">Report Ready</span>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-bold">Report Unlocked</span>
                       <p className="text-xs text-slate-700 leading-normal">
-                        Your premium report has been unlocked. Your browser's print dialog should have opened automatically.
+                        Your custom report for <strong>{profile.district || "your district"}</strong> has been generated. Your browser's print dialog should have opened automatically.
                       </p>
                       <p className="text-[10px] text-slate-400 italic">
                         Select "Save as PDF" in your print destination to download it to your device.
@@ -1508,7 +1508,8 @@ export default function App() {
                           <CheckCircle className="h-10 w-10 animate-bounce" />
                         </div>
                         <div className="space-y-1">
-                          <h4 className="text-base font-bold text-slate-900">Email Dispatched!</h4>
+                          <h4 className="text-base font-bold text-slate-900">Your {profile.district || "District"} PSERS Estimate Dispatched!</h4>
+                          <p className="text-xs text-emerald-700 font-medium">Hosted in partnership with <strong>{activeSponsor.sponsorName}</strong> ({activeSponsor.location}).</p>
                         </div>
                         
                         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2 text-left">
