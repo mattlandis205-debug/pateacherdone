@@ -38,7 +38,7 @@ const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
   "Central Bucks School District": {
     sponsorName: "Paragon Wealth Management",
     location: "Doylestown, PA",
-    link: "https://pateacherdone.com",
+    link: "https://paragon-wealth.com/",
     logoUrl: "/paragon-logo.png",
   },
   "Pennridge School District": {
@@ -49,25 +49,25 @@ const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
   "Council Rock School District": {
     sponsorName: "Anthony Petsis & Associates",
     location: "Newtown, PA",
-    link: "https://pateacherdone.com",
+    link: "https://www.apetsis.com/",
     logoUrl: "/petsis-logo.jpg",
   },
   "Souderton Area School District": {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
-    link: "https://pateacherdone.com",
+    link: "https://paragon-wealth.com/",
     logoUrl: "/paragon-logo.png",
   },
   "Quakertown Community School District": {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
-    link: "https://pateacherdone.com",
+    link: "https://paragon-wealth.com/",
     logoUrl: "/paragon-logo.png",
   },
   "Other PA School District": {
     sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
-    link: "https://pateacherdone.com",
+    link: "https://paragon-wealth.com/",
     logoUrl: "/paragon-logo.png",
   },
 };
