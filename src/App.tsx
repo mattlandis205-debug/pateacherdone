@@ -35,9 +35,9 @@ interface DistrictSponsor {
 
 const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
   "Central Bucks School District": {
-    sponsorName: "Winthrop Partners",
+    sponsorName: "Paragon Wealth Management",
     location: "Doylestown, PA",
-    link: "https://winthroppartners.com",
+    link: "https://pateacherdone.com",
   },
   "Pennridge School District": {
     sponsorName: "Perkasie Financial",
@@ -45,24 +45,24 @@ const DISTRICT_SPONSORS: Record<string, DistrictSponsor> = {
     link: "https://pateacherdone.com",
   },
   "Council Rock School District": {
-    sponsorName: "Winthrop Partners",
+    sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
-    link: "https://winthroppartners.com",
+    link: "https://pateacherdone.com",
   },
   "Souderton Area School District": {
-    sponsorName: "Winthrop Partners",
+    sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
-    link: "https://winthroppartners.com",
+    link: "https://pateacherdone.com",
   },
   "Quakertown Community School District": {
-    sponsorName: "Winthrop Partners",
+    sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
-    link: "https://winthroppartners.com",
+    link: "https://pateacherdone.com",
   },
   "Other PA School District": {
-    sponsorName: "Winthrop Partners",
+    sponsorName: "Paragon Wealth Management",
     location: "Bucks County, PA",
-    link: "https://winthroppartners.com",
+    link: "https://pateacherdone.com",
   },
 };
 
