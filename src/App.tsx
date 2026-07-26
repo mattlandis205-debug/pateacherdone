@@ -375,7 +375,7 @@ export default function App() {
                   <h1 className="text-xl font-bold text-slate-900 tracking-tight">PA Teacher Retirement Navigator</h1>
                   <span className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-100">PSERS Guide</span>
                 </div>
-                <p className="text-xs text-slate-500">Retirement planning simulation help for Pennsylvania Educators.</p>
+                <p className="text-xs text-slate-500">A retirement planning simulation for Pennsylvania Educators.</p>
               </div>
             </div>
             
