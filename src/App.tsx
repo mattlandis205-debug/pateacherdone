@@ -378,12 +378,6 @@ export default function App() {
                 <p className="text-xs text-slate-500">A retirement planning simulation for Pennsylvania Educators.</p>
               </div>
             </div>
-            
-            {/* Live Status Pill */}
-            <div className="flex items-center gap-1.5 bg-emerald-50/60 text-emerald-800 px-3 py-1.5 rounded-xl border border-emerald-100 self-start sm:self-auto text-xs font-semibold">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Live Calculator Active
-            </div>
           </div>
         </div>
       </header>
@@ -893,10 +887,6 @@ export default function App() {
                       <span className="text-[9px] opacity-85 font-normal">(Free Report)</span>
                     </span>
                   </button>
-                  <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg text-xs font-semibold">
-                    <CheckCircle className="h-3.5 w-3.5" />
-                    Live Sync
-                  </div>
                 </div>
               </div>
 
