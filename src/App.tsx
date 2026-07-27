@@ -182,7 +182,8 @@ export default function App() {
     setShowPaymentModal(true);
   };
 
-  const handleGenerateFreeReport = async () => {
+  const handleGenerateFreeReport = async (withAdvisor: boolean = false) => {
+    setMatchWithAdvisor(withAdvisor);
     setLeadSubmitStatus('idle');
     setPhoneAddress('');
     setPaymentStep('success');
@@ -211,7 +212,7 @@ export default function App() {
     }
 
     // 2. If match with advisor is selected, send warm lead notification to your inbox
-    if (matchWithAdvisor && emailAddress.trim()) {
+    if (withAdvisor && emailAddress.trim()) {
       try {
         fetch("/api/submit-lead", {
           method: "POST",
@@ -1282,7 +1283,7 @@ export default function App() {
                 )}
 
                 {/* Dynamic District Sponsor Match Card */}
-                <div className="bg-emerald-50/60 border border-emerald-200/70 rounded-xl p-3.5 space-y-2.5 text-left">
+                <div className="bg-emerald-50/60 border border-emerald-200/70 rounded-xl p-3.5 space-y-2 text-left">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block font-mono">
                       🏛️ Local Partner Match
@@ -1314,23 +1315,9 @@ export default function App() {
                     )}
                     , our local financial advisor sponsor for <strong>{profile.district || "your district"}</strong>.
                   </p>
-
-                  <label className="flex items-start gap-2.5 cursor-pointer pt-2 border-t border-emerald-200/50 select-none">
-                    <input
-                      type="checkbox"
-                      className="mt-0.5 h-4 w-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer shrink-0"
-                      checked={matchWithAdvisor}
-                      onChange={(e) => setMatchWithAdvisor(e.target.checked)}
-                    />
-                    <div className="space-y-0.5">
-                      <span className="text-xs font-bold text-slate-800 block">
-                        Yes, connect me with {activeSponsor.sponsorName} for a free 15-min review
-                      </span>
-                      <span className="text-[10px] text-slate-500 block leading-tight">
-                        No spam, no list-selling—just a single polite review of your calculations.
-                      </span>
-                    </div>
-                  </label>
+                  <p className="text-[10px] text-slate-500 pt-1 border-t border-emerald-200/50">
+                    No spam, no list-selling—just an optional, polite 15-minute calculation review.
+                  </p>
                 </div>
 
                 {/* Free Access Information */}
@@ -1342,16 +1329,29 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Generate Button */}
-                <button
-                  type="button"
-                  onClick={handleGenerateFreeReport}
-                  disabled={(deliveryMethod === 'email' || matchWithAdvisor) && !emailAddress.trim()}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-55 disabled:hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
-                >
-                  <FileText className="h-4 w-4" />
-                  {matchWithAdvisor ? "Compile Report & Connect with Advisor" : "Compile Report"}
-                </button>
+                {/* Dual Active-Choice Action Buttons */}
+                <div className="space-y-2.5 pt-1">
+                  {/* Button A: Primary / Large / High-Value */}
+                  <button
+                    type="button"
+                    onClick={() => handleGenerateFreeReport(true)}
+                    disabled={deliveryMethod === 'email' && !emailAddress.trim()}
+                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-55 text-white font-extrabold py-3 px-4 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all transform active:scale-[0.99] cursor-pointer"
+                  >
+                    <Sparkles className="h-4.5 w-4.5 shrink-0 text-amber-300" />
+                    <span>Compile Report & Get Free 15-Min Advisor Review</span>
+                  </button>
+
+                  {/* Button B: Secondary / Ghost Style */}
+                  <button
+                    type="button"
+                    onClick={() => handleGenerateFreeReport(false)}
+                    disabled={deliveryMethod === 'email' && !emailAddress.trim()}
+                    className="w-full bg-white hover:bg-slate-50 disabled:opacity-55 text-slate-600 hover:text-slate-800 font-semibold py-2.5 px-4 rounded-xl text-xs border border-slate-200 hover:border-slate-300 transition-colors cursor-pointer"
+                  >
+                    Just Compile Basic Report (No Review)
+                  </button>
+                </div>
               </div>
             ) : (
               /* Success & Matchmaker Step 2 Screen */
