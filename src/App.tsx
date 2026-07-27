@@ -116,8 +116,10 @@ export default function App() {
     const ratePercentStr = selectedClass.employeeRate.replace("%", "");
     const rate = parseFloat(ratePercentStr) / 100 || 0.075;
 
-    // Career Average Salary is approx 70% of peak Final Average Salary (FAS)
-    const avgCareerSalary = fasNum * 0.70;
+    // Career Average Salary ratio based on empirical CBEA salary schedules (step 1 ~$44k to step 16 ~$105k-$114k)
+    // Dynamic ratio scales smoothly from ~92% for short careers to ~70% for full 25-30+ yr careers
+    const careerRatio = Math.max(0.68, Math.min(0.92, 1.0 - (yearsNum * 0.01)));
+    const avgCareerSalary = fasNum * careerRatio;
     const avgAnnualContribution = avgCareerSalary * rate;
     const r = 0.03; // 3% fixed interest rate guaranteed by PSERS
 
