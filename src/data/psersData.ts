@@ -311,13 +311,16 @@ export function calculatePSERSRetirement(rawProfile: UserProfile): CalculationRe
 
   // Option 4 Divisor (Dollar Annuity Value / Actuarial Factor): depends on member age at retirement
   const op4Divisor = Math.max(120, Math.min(240, 201 - (rAge - 58) * 5.0));
+  const grossAfterOp4 = Math.max(0, grossMonthlyPension - (profile.lumpSumWithdrawal / op4Divisor));
 
   const optionReductions = {
     max: grossMonthlyPension,
     option1: grossMonthlyPension * op1Factor,
     option2: grossMonthlyPension * op2Factor,
     option3: grossMonthlyPension * op3Factor,
-    option4: Math.max(0, grossMonthlyPension - (profile.lumpSumWithdrawal / op4Divisor))
+    option4: grossAfterOp4,
+    option4_op2: grossAfterOp4 * op2Factor,
+    option4_op3: grossAfterOp4 * op3Factor,
   };
 
   // 9. Net Monthly Pension calculation based on selected option
@@ -326,6 +329,8 @@ export function calculatePSERSRetirement(rawProfile: UserProfile): CalculationRe
   else if (profile.payoutOption === "option2") selectedOptionGross = optionReductions.option2;
   else if (profile.payoutOption === "option3") selectedOptionGross = optionReductions.option3;
   else if (profile.payoutOption === "option4") selectedOptionGross = optionReductions.option4;
+  else if (profile.payoutOption === "option4_op2") selectedOptionGross = optionReductions.option4_op2;
+  else if (profile.payoutOption === "option4_op3") selectedOptionGross = optionReductions.option4_op3;
 
   // Net = Gross - Healthcare + Assistance
   const netMonthlyPension = isVested
@@ -341,12 +346,18 @@ export function calculatePSERSRetirement(rawProfile: UserProfile): CalculationRe
     } else if (profile.payoutOption === "option3") {
       optionText = "Option 3 (50% Survivor)";
       survivorText = ` (upon your death, your beneficiary will receive a half-size monthly check of $${(selectedOptionGross / 2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mo for life)`;
+    } else if (profile.payoutOption === "option4_op2") {
+      optionText = "Option 4 + Option 2 (Lump-Sum + 100% Survivor)";
+      survivorText = ` (upon your death, your beneficiary will continue to receive the identical monthly check of $${selectedOptionGross.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mo for life)`;
+    } else if (profile.payoutOption === "option4_op3") {
+      optionText = "Option 4 + Option 3 (Lump-Sum + 50% Survivor)";
+      survivorText = ` (upon your death, your beneficiary will receive a half-size monthly check of $${(selectedOptionGross / 2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mo for life)`;
     } else if (profile.payoutOption === "max") {
       optionText = "Maximum Single Life";
     } else if (profile.payoutOption === "option1") {
       optionText = "Option 1 (Declining Balance)";
     } else if (profile.payoutOption === "option4") {
-      optionText = "Option 4 (Lump-Sum Combo)";
+      optionText = "Option 4 (Lump-Sum + Single Life)";
     }
 
     explanationSteps.push(

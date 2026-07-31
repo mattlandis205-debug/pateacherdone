@@ -605,7 +605,7 @@ export default function App() {
                         {/* Entire Pie Base */}
                         <circle cx="16" cy="16" r="14" fill="transparent" stroke="#10b981" strokeWidth="4" />
                         {/* Lump Sum Slice (Option 4) if withdrawn */}
-                        {profile.payoutOption === "option4" && (
+                        {profile.payoutOption.startsWith("option4") && (
                           <circle
                             cx="16"
                             cy="16"
@@ -626,7 +626,7 @@ export default function App() {
 
                     <div className="space-y-1">
                       <p className="text-[11px] text-slate-200 leading-relaxed">
-                        {profile.payoutOption === "option4" ? (
+                        {profile.payoutOption.startsWith("option4") ? (
                           <>
                             🍎 <strong className="text-rose-300">Shrunk Pie Active:</strong> You chose Option 4. Slicing out your personal contributions of <strong className="text-rose-400">${profile.lumpSumWithdrawal.toLocaleString()}</strong> upfront leaves a smaller pie for monthlychecks.
                           </>
@@ -649,7 +649,7 @@ export default function App() {
                     <input
                       type="checkbox"
                       className="mt-1 h-4 w-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer"
-                      checked={profile.payoutOption === "option4"}
+                      checked={profile.payoutOption.startsWith("option4")}
                       onChange={(e) => {
                         updateProfileField("payoutOption", e.target.checked ? "option4" : "max");
                       }}
@@ -660,7 +660,7 @@ export default function App() {
                     </div>
                   </label>
 
-                  {profile.payoutOption === "option4" && (
+                  {profile.payoutOption.startsWith("option4") && (
                     <div className="pt-3 border-t border-slate-200 space-y-3">
                       <div>
                         <div className="flex justify-between text-xs mb-1">
@@ -690,7 +690,7 @@ export default function App() {
                         <div className="grid grid-cols-3 gap-2">
                           <button
                             onClick={() => updateProfileField("payoutOption", "option4")}
-                            className={`p-2 text-center rounded-lg text-[10px] border leading-tight ${
+                            className={`p-2 text-center rounded-lg text-[10px] border leading-tight cursor-pointer ${
                               profile.payoutOption === "option4" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
                             }`}
                           >
@@ -698,22 +698,22 @@ export default function App() {
                           </button>
                           <button
                             onClick={() => {
-                              updateProfileField("payoutOption", "option2");
+                              updateProfileField("payoutOption", "option4_op2");
                               updateProfileField("hasBeneficiary", true);
                             }}
-                            className={`p-2 text-center rounded-lg text-[10px] border leading-tight ${
-                              profile.payoutOption === "option2" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
+                            className={`p-2 text-center rounded-lg text-[10px] border leading-tight cursor-pointer ${
+                              profile.payoutOption === "option4_op2" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
                             }`}
                           >
                             Protect Survivor 100%
                           </button>
                           <button
                             onClick={() => {
-                              updateProfileField("payoutOption", "option3");
+                              updateProfileField("payoutOption", "option4_op3");
                               updateProfileField("hasBeneficiary", true);
                             }}
-                            className={`p-2 text-center rounded-lg text-[10px] border leading-tight ${
-                              profile.payoutOption === "option3" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
+                            className={`p-2 text-center rounded-lg text-[10px] border leading-tight cursor-pointer ${
+                              profile.payoutOption === "option4_op3" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
                             }`}
                           >
                             Protect Survivor 50%
@@ -726,13 +726,13 @@ export default function App() {
                     </div>
                   )}
 
-                  {profile.payoutOption !== "option4" && (
+                  {!profile.payoutOption.startsWith("option4") && (
                     <div>
                       <span className="text-xs font-semibold text-slate-600 block mb-1.5">Select standard pension distribution:</span>
                       <div className="grid grid-cols-3 gap-2">
                         <button
                           onClick={() => updateProfileField("payoutOption", "max")}
-                          className={`p-2 text-center rounded-lg text-[11px] border font-medium leading-tight ${
+                          className={`p-2 text-center rounded-lg text-[11px] border font-medium leading-tight cursor-pointer ${
                             profile.payoutOption === "max" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
                           }`}
                         >
@@ -743,7 +743,7 @@ export default function App() {
                             updateProfileField("payoutOption", "option2");
                             updateProfileField("hasBeneficiary", true);
                           }}
-                          className={`p-2 text-center rounded-lg text-[11px] border font-medium leading-tight ${
+                          className={`p-2 text-center rounded-lg text-[11px] border font-medium leading-tight cursor-pointer ${
                             profile.payoutOption === "option2" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
                           }`}
                         >
@@ -754,7 +754,7 @@ export default function App() {
                             updateProfileField("payoutOption", "option3");
                             updateProfileField("hasBeneficiary", true);
                           }}
-                          className={`p-2 text-center rounded-lg text-[11px] border font-medium leading-tight ${
+                          className={`p-2 text-center rounded-lg text-[11px] border font-medium leading-tight cursor-pointer ${
                             profile.payoutOption === "option3" ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold" : "border-slate-200 bg-white"
                           }`}
                         >
@@ -766,7 +766,7 @@ export default function App() {
                 </div>
 
                 {/* Beneficiary Age Input if beneficiary protects */}
-                {(profile.payoutOption === "option2" || profile.payoutOption === "option3" || profile.hasBeneficiary) && (
+                {(profile.payoutOption === "option2" || profile.payoutOption === "option3" || profile.payoutOption === "option4_op2" || profile.payoutOption === "option4_op3" || profile.hasBeneficiary) && (
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 grid grid-cols-2 gap-4">
                     <label className="flex items-center gap-2 cursor-pointer col-span-2">
                       <input
@@ -1040,7 +1040,7 @@ export default function App() {
                       </tr>
 
                       {/* Row 4: Option 4 Combo */}
-                      <tr className={`hover:bg-rose-50/20 ${profile.payoutOption === "option4" ? "bg-rose-50/40 font-bold border-l-4 border-rose-500" : ""}`}>
+                      <tr className={`hover:bg-rose-50/20 ${profile.payoutOption.startsWith("option4") ? "bg-rose-50/40 font-bold border-l-4 border-rose-500" : ""}`}>
                         <td className="py-3 px-3">
                           <div className="font-bold text-slate-800">Option 4 (Lump-Sum Combo)</div>
                           <div className="text-[10px] text-slate-500">You withdraw accumulated deductions.</div>

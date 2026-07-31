@@ -21,7 +21,7 @@ export interface UserProfile {
   fas: number | "";
   hasBeneficiary: boolean;
   beneficiaryAge: number | "";
-  payoutOption: "max" | "option1" | "option2" | "option3" | "option4";
+  payoutOption: "max" | "option1" | "option2" | "option3" | "option4" | "option4_op2" | "option4_op3";
   lumpSumWithdrawal: number | ""; // accumulated deductions + interest for Option 4
   pre65Healthcare: boolean; // Needs coverage before age 65
   post65Healthcare: boolean; // Medicare + HOP supplement interest
