@@ -298,19 +298,19 @@ export function calculatePSERSRetirement(rawProfile: UserProfile): CalculationRe
   const rAge = profile.targetAge;
   const bAge = profile.beneficiaryAge;
 
-  // Option 1 factor: declines slightly with age
-  const op1Factor = Math.max(0.90, Math.min(0.98, 0.965 - (rAge - 58) * 0.003));
+  // Option 1 factor: declines slightly with age (PSERS official ~96.53% at age 58)
+  const op1Factor = Math.max(0.90, Math.min(0.98, 0.9653 - (rAge - 58) * 0.003));
 
-  // Option 2 factor (100% Joint Survivor): depends on member age and age difference
-  const baseOp2 = 0.905 - (rAge - 58) * 0.004;
+  // Option 2 factor (100% Joint Survivor): depends on member age and beneficiary age difference (PSERS official ~89.68% at age 58/57)
+  const baseOp2 = 0.9008 - (rAge - 58) * 0.004;
   const op2Factor = Math.max(0.60, Math.min(0.98, baseOp2 + (bAge - rAge) * 0.004));
 
-  // Option 3 factor (50% Joint Survivor): depends on member age and age difference
-  const baseOp3 = 0.950 - (rAge - 58) * 0.002;
+  // Option 3 factor (50% Joint Survivor): depends on member age and beneficiary age difference (PSERS official ~94.56% at age 58/57)
+  const baseOp3 = 0.9476 - (rAge - 58) * 0.002;
   const op3Factor = Math.max(0.75, Math.min(0.99, baseOp3 + (bAge - rAge) * 0.002));
 
-  // Option 4 Divisor (Dollar Annuity Value / Actuarial Factor): depends on member age at retirement
-  const op4Divisor = Math.max(120, Math.min(240, 201 - (rAge - 58) * 5.0));
+  // Option 4 Divisor (Dollar Annuity Value / Actuarial Factor): depends on member age at retirement (PSERS official ~200.56 at age 58)
+  const op4Divisor = Math.max(120, Math.min(240, 200.56 - (rAge - 58) * 4.8));
   const grossAfterOp4 = Math.max(0, grossMonthlyPension - (profile.lumpSumWithdrawal / op4Divisor));
 
   const optionReductions = {
